@@ -1,0 +1,776 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Makler CRM – Optriq</title>
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    :root {
+      --navy:      #0f2340;
+      --navy-mid:  #1a3557;
+      --navy-light:#254875;
+      --accent:    #2e6fba;
+      --accent-hover: #2560a5;
+      --bg:        #f4f6f9;
+      --surface:   #ffffff;
+      --border:    #dde2ea;
+      --text:      #1a2535;
+      --muted:     #6b7a8d;
+      --success:   #1e8c5a;
+      --warning:   #b07d1a;
+      --danger:    #b03030;
+      --sidebar-w: 230px;
+    }
+
+    body {
+      font-family: 'Segoe UI', system-ui, sans-serif;
+      background: var(--bg);
+      color: var(--text);
+      display: flex;
+      height: 100vh;
+      overflow: hidden;
+    }
+
+    /* ── SIDEBAR ── */
+    #sidebar {
+      width: var(--sidebar-w);
+      background: var(--navy);
+      display: flex;
+      flex-direction: column;
+      flex-shrink: 0;
+    }
+
+    .sidebar-logo {
+      padding: 24px 20px 20px;
+      border-bottom: 1px solid var(--navy-mid);
+    }
+    .sidebar-logo .brand {
+      font-size: 18px;
+      font-weight: 700;
+      color: #fff;
+      letter-spacing: 0.5px;
+    }
+    .sidebar-logo .sub {
+      font-size: 11px;
+      color: #7a9cc0;
+      margin-top: 2px;
+    }
+
+    .sidebar-nav {
+      flex: 1;
+      padding: 16px 0;
+    }
+    .nav-section {
+      font-size: 10px;
+      font-weight: 600;
+      color: #4e6a8a;
+      text-transform: uppercase;
+      letter-spacing: 1px;
+      padding: 12px 20px 6px;
+    }
+    .nav-item {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      padding: 10px 20px;
+      color: #a8bfd4;
+      font-size: 14px;
+      cursor: pointer;
+      border-left: 3px solid transparent;
+      transition: background 0.15s, color 0.15s;
+    }
+    .nav-item:hover { background: var(--navy-mid); color: #fff; }
+    .nav-item.active { background: var(--navy-mid); color: #fff; border-left-color: var(--accent); }
+    .nav-item svg { flex-shrink: 0; opacity: 0.7; }
+    .nav-item.active svg, .nav-item:hover svg { opacity: 1; }
+
+    .sidebar-footer {
+      padding: 16px 20px;
+      border-top: 1px solid var(--navy-mid);
+      font-size: 12px;
+      color: #4e6a8a;
+    }
+
+    /* ── MAIN ── */
+    #main {
+      flex: 1;
+      display: flex;
+      flex-direction: column;
+      overflow: hidden;
+    }
+
+    #topbar {
+      background: var(--surface);
+      border-bottom: 1px solid var(--border);
+      padding: 0 28px;
+      height: 60px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      flex-shrink: 0;
+    }
+    .topbar-title { font-size: 17px; font-weight: 600; color: var(--text); }
+
+    .btn {
+      display: inline-flex;
+      align-items: center;
+      gap: 7px;
+      padding: 8px 16px;
+      border-radius: 6px;
+      font-size: 13px;
+      font-weight: 500;
+      cursor: pointer;
+      border: none;
+      transition: background 0.15s;
+    }
+    .btn-primary { background: var(--accent); color: #fff; }
+    .btn-primary:hover { background: var(--accent-hover); }
+    .btn-ghost { background: transparent; color: var(--muted); border: 1px solid var(--border); }
+    .btn-ghost:hover { background: var(--bg); color: var(--text); }
+
+    #content {
+      flex: 1;
+      overflow-y: auto;
+      padding: 28px;
+    }
+
+    /* ── KPI CARDS ── */
+    .kpi-row {
+      display: grid;
+      grid-template-columns: repeat(4, 1fr);
+      gap: 16px;
+      margin-bottom: 28px;
+    }
+    .kpi-card {
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: 8px;
+      padding: 20px;
+    }
+    .kpi-label { font-size: 12px; color: var(--muted); font-weight: 500; text-transform: uppercase; letter-spacing: 0.5px; }
+    .kpi-value { font-size: 28px; font-weight: 700; color: var(--text); margin-top: 6px; }
+    .kpi-sub { font-size: 12px; color: var(--muted); margin-top: 4px; }
+
+    /* ── FILTER BAR ── */
+    .filter-bar {
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: 8px;
+      padding: 14px 18px;
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      margin-bottom: 16px;
+      flex-wrap: wrap;
+    }
+    .filter-bar input[type="text"] {
+      flex: 1;
+      min-width: 200px;
+      border: 1px solid var(--border);
+      border-radius: 6px;
+      padding: 7px 12px;
+      font-size: 13px;
+      color: var(--text);
+      outline: none;
+      background: var(--bg);
+    }
+    .filter-bar input:focus { border-color: var(--accent); background: #fff; }
+    .filter-bar select {
+      border: 1px solid var(--border);
+      border-radius: 6px;
+      padding: 7px 10px;
+      font-size: 13px;
+      color: var(--text);
+      background: var(--bg);
+      cursor: pointer;
+      outline: none;
+    }
+    .filter-bar select:focus { border-color: var(--accent); }
+
+    /* ── TABLE ── */
+    .table-wrap {
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: 8px;
+      overflow: hidden;
+    }
+    table { width: 100%; border-collapse: collapse; }
+    thead { background: #f8fafc; }
+    thead th {
+      text-align: left;
+      padding: 11px 16px;
+      font-size: 11px;
+      font-weight: 600;
+      color: var(--muted);
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+      border-bottom: 1px solid var(--border);
+    }
+    tbody tr {
+      border-bottom: 1px solid var(--border);
+      cursor: pointer;
+      transition: background 0.1s;
+    }
+    tbody tr:last-child { border-bottom: none; }
+    tbody tr:hover { background: #f8fafc; }
+    tbody td { padding: 13px 16px; font-size: 13px; color: var(--text); }
+
+    .lead-name { font-weight: 600; }
+    .lead-meta { font-size: 12px; color: var(--muted); margin-top: 2px; }
+
+    /* Score badge */
+    .score-badge {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      width: 30px;
+      height: 30px;
+      border-radius: 50%;
+      font-size: 12px;
+      font-weight: 700;
+    }
+    .score-high { background: #d4f0e4; color: #1a7a4e; }
+    .score-mid  { background: #fef3cd; color: #9a6b10; }
+    .score-low  { background: #fde8e8; color: #a02020; }
+
+    /* Status pill */
+    .status-pill {
+      display: inline-flex;
+      align-items: center;
+      gap: 5px;
+      padding: 3px 10px;
+      border-radius: 20px;
+      font-size: 12px;
+      font-weight: 500;
+    }
+    .status-pill::before { content: ''; width: 6px; height: 6px; border-radius: 50%; }
+    .s-neu        { background: #e8f0fb; color: #2c5fa8; }
+    .s-neu::before { background: #2c5fa8; }
+    .s-kontaktiert { background: #e8f5ee; color: #1e8c5a; }
+    .s-kontaktiert::before { background: #1e8c5a; }
+    .s-termin     { background: #fff4e0; color: #b07d1a; }
+    .s-termin::before { background: #b07d1a; }
+    .s-abschluss  { background: #d4f0e4; color: #0f6e42; }
+    .s-abschluss::before { background: #0f6e42; }
+    .s-verloren   { background: #fde8e8; color: #a02020; }
+    .s-verloren::before { background: #a02020; }
+
+    .empty-state {
+      text-align: center;
+      padding: 60px 20px;
+      color: var(--muted);
+    }
+    .empty-state svg { opacity: 0.3; margin-bottom: 12px; }
+    .empty-state p { font-size: 14px; }
+
+    /* ── MODAL ── */
+    #modal-overlay {
+      display: none;
+      position: fixed;
+      inset: 0;
+      background: rgba(10, 20, 40, 0.45);
+      z-index: 100;
+      align-items: flex-start;
+      justify-content: flex-end;
+    }
+    #modal-overlay.open { display: flex; }
+
+    #modal {
+      width: 480px;
+      height: 100vh;
+      background: var(--surface);
+      display: flex;
+      flex-direction: column;
+      overflow: hidden;
+      box-shadow: -4px 0 30px rgba(0,0,0,0.12);
+    }
+    .modal-header {
+      padding: 20px 24px;
+      border-bottom: 1px solid var(--border);
+      display: flex;
+      align-items: flex-start;
+      justify-content: space-between;
+      gap: 12px;
+      flex-shrink: 0;
+    }
+    .modal-header-info .name { font-size: 18px; font-weight: 700; }
+    .modal-header-info .sub { font-size: 13px; color: var(--muted); margin-top: 3px; }
+    .modal-close {
+      background: none;
+      border: none;
+      cursor: pointer;
+      color: var(--muted);
+      padding: 4px;
+      flex-shrink: 0;
+    }
+    .modal-close:hover { color: var(--text); }
+
+    .modal-tabs {
+      display: flex;
+      border-bottom: 1px solid var(--border);
+      flex-shrink: 0;
+    }
+    .modal-tab {
+      padding: 12px 20px;
+      font-size: 13px;
+      font-weight: 500;
+      color: var(--muted);
+      cursor: pointer;
+      border-bottom: 2px solid transparent;
+      transition: color 0.15s;
+    }
+    .modal-tab.active { color: var(--accent); border-bottom-color: var(--accent); }
+
+    .modal-body { flex: 1; overflow-y: auto; padding: 20px 24px; }
+
+    /* Detail fields */
+    .detail-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 14px; margin-bottom: 20px; }
+    .detail-field label { font-size: 11px; color: var(--muted); font-weight: 600; text-transform: uppercase; letter-spacing: 0.4px; display: block; margin-bottom: 4px; }
+    .detail-field span { font-size: 14px; color: var(--text); }
+
+    .status-select-wrap { margin-bottom: 20px; }
+    .status-select-wrap label { font-size: 11px; color: var(--muted); font-weight: 600; text-transform: uppercase; letter-spacing: 0.4px; display: block; margin-bottom: 6px; }
+    .status-select-wrap select {
+      width: 100%;
+      border: 1px solid var(--border);
+      border-radius: 6px;
+      padding: 8px 12px;
+      font-size: 13px;
+      color: var(--text);
+      background: var(--bg);
+      cursor: pointer;
+      outline: none;
+    }
+
+    .ai-summary-box {
+      background: #f0f5ff;
+      border: 1px solid #c8d9f5;
+      border-radius: 8px;
+      padding: 14px;
+      margin-bottom: 20px;
+    }
+    .ai-summary-box .ai-label { font-size: 11px; font-weight: 600; color: #2c5fa8; text-transform: uppercase; letter-spacing: 0.5px; margin-bottom: 6px; }
+    .ai-summary-box p { font-size: 13px; color: #2a3d5e; line-height: 1.5; }
+
+    /* Notes */
+    .notes-list { display: flex; flex-direction: column; gap: 10px; margin-bottom: 16px; }
+    .note-item { background: var(--bg); border: 1px solid var(--border); border-radius: 6px; padding: 12px; }
+    .note-item .note-meta { font-size: 11px; color: var(--muted); margin-bottom: 5px; }
+    .note-item .note-content { font-size: 13px; }
+
+    .add-note-area textarea {
+      width: 100%;
+      border: 1px solid var(--border);
+      border-radius: 6px;
+      padding: 10px 12px;
+      font-size: 13px;
+      resize: vertical;
+      min-height: 80px;
+      font-family: inherit;
+      color: var(--text);
+      outline: none;
+    }
+    .add-note-area textarea:focus { border-color: var(--accent); }
+    .add-note-area { display: flex; flex-direction: column; gap: 8px; }
+
+    /* Activities */
+    .activity-list { display: flex; flex-direction: column; gap: 0; }
+    .activity-item {
+      display: flex;
+      gap: 12px;
+      padding: 10px 0;
+      border-bottom: 1px solid var(--border);
+    }
+    .activity-item:last-child { border-bottom: none; }
+    .activity-icon {
+      width: 32px;
+      height: 32px;
+      border-radius: 50%;
+      background: #e8f0fb;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      flex-shrink: 0;
+      font-size: 14px;
+    }
+    .activity-info .type { font-size: 13px; font-weight: 600; }
+    .activity-info .content { font-size: 12px; color: var(--muted); margin-top: 2px; }
+    .activity-info .date { font-size: 11px; color: #aab; margin-top: 2px; }
+
+    /* Loading */
+    .loading { text-align: center; padding: 40px; color: var(--muted); font-size: 14px; }
+  </style>
+</head>
+<body>
+
+<!-- SIDEBAR -->
+<aside id="sidebar">
+  <div class="sidebar-logo">
+    <div class="brand">Optriq CRM</div>
+    <div class="sub">Immobilien-Leads</div>
+  </div>
+  <nav class="sidebar-nav">
+    <div class="nav-section">Verwaltung</div>
+    <div class="nav-item active" data-view="leads">
+      <svg width="16" height="16" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/></svg>
+      Leads
+    </div>
+    <div class="nav-item" data-view="kunden">
+      <svg width="16" height="16" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><rect x="2" y="7" width="20" height="14" rx="2"/><path d="M16 21V5a2 2 0 0 0-2-2h-4a2 2 0 0 0-2 2v16"/></svg>
+      Kunden (Makler)
+    </div>
+  </nav>
+  <div class="sidebar-footer">v1.0 · Optriq</div>
+</aside>
+
+<!-- MAIN -->
+<div id="main">
+  <div id="topbar">
+    <span class="topbar-title" id="view-title">Leads</span>
+    <button class="btn btn-primary" id="btn-new-lead" onclick="openNewLeadModal()">
+      <svg width="14" height="14" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>
+      Neuer Lead
+    </button>
+  </div>
+
+  <div id="content">
+    <!-- KPIs -->
+    <div class="kpi-row" id="kpi-row">
+      <div class="kpi-card">
+        <div class="kpi-label">Gesamt Leads</div>
+        <div class="kpi-value" id="kpi-total">–</div>
+      </div>
+      <div class="kpi-card">
+        <div class="kpi-label">Neu</div>
+        <div class="kpi-value" id="kpi-neu">–</div>
+      </div>
+      <div class="kpi-card">
+        <div class="kpi-label">Termine</div>
+        <div class="kpi-value" id="kpi-termin">–</div>
+      </div>
+      <div class="kpi-card">
+        <div class="kpi-label">Abschlüsse</div>
+        <div class="kpi-value" id="kpi-abschluss">–</div>
+      </div>
+    </div>
+
+    <!-- FILTER BAR -->
+    <div class="filter-bar">
+      <input type="text" id="search-input" placeholder="Name, E-Mail, Ort suchen…" oninput="filterLeads()" />
+      <select id="filter-status" onchange="filterLeads()">
+        <option value="">Alle Status</option>
+        <option value="neu">Neu</option>
+        <option value="kontaktiert">Kontaktiert</option>
+        <option value="termin">Termin</option>
+        <option value="abschluss">Abschluss</option>
+        <option value="verloren">Verloren</option>
+      </select>
+      <select id="filter-score" onchange="filterLeads()">
+        <option value="">Alle Scores</option>
+        <option value="high">Hoch (7–10)</option>
+        <option value="mid">Mittel (4–6)</option>
+        <option value="low">Niedrig (1–3)</option>
+      </select>
+    </div>
+
+    <!-- TABLE -->
+    <div class="table-wrap">
+      <table>
+        <thead>
+          <tr>
+            <th>Lead</th>
+            <th>Score</th>
+            <th>Budget</th>
+            <th>Ort</th>
+            <th>Status</th>
+            <th>Eingang</th>
+          </tr>
+        </thead>
+        <tbody id="leads-table-body">
+          <tr><td colspan="6"><div class="loading">Lade Leads…</div></td></tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
+</div>
+
+<!-- DETAIL MODAL (Slide-in) -->
+<div id="modal-overlay" onclick="closeModalOnOverlay(event)">
+  <div id="modal">
+    <div class="modal-header">
+      <div class="modal-header-info">
+        <div class="name" id="modal-name">–</div>
+        <div class="sub" id="modal-sub">–</div>
+      </div>
+      <button class="modal-close" onclick="closeModal()">
+        <svg width="20" height="20" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
+      </button>
+    </div>
+    <div class="modal-tabs">
+      <div class="modal-tab active" data-tab="details" onclick="switchTab('details')">Details</div>
+      <div class="modal-tab" data-tab="notizen" onclick="switchTab('notizen')">Notizen</div>
+      <div class="modal-tab" data-tab="aktivitaeten" onclick="switchTab('aktivitaeten')">Aktivitäten</div>
+    </div>
+    <div class="modal-body" id="modal-body">
+      <!-- dynamically rendered -->
+    </div>
+  </div>
+</div>
+
+<script>
+const SUPABASE_URL  = 'https://rmogxnkbzxvktillhtfg.supabase.co';
+const SUPABASE_KEY  = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InJtb2d4bmtienh2a3RpbGxodGZnIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzI4MDcyNzYsImV4cCI6MjA4ODM4MzI3Nn0.gPvonbhjNBuxv2J7C9GBQjpwdEyrRr4DCaIp6G7CRyw';
+const db = supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
+
+let allLeads = [];
+let currentLead = null;
+let currentTab = 'details';
+
+// ── INIT ──────────────────────────────────────────────
+document.addEventListener('DOMContentLoaded', () => {
+  loadLeads();
+});
+
+// ── LOAD ──────────────────────────────────────────────
+async function loadLeads() {
+  const { data, error } = await db
+    .from('makler_leads')
+    .select('*')
+    .order('created_at', { ascending: false });
+
+  if (error) { console.error(error); return; }
+  allLeads = data || [];
+  updateKPIs();
+  renderTable(allLeads);
+}
+
+function updateKPIs() {
+  document.getElementById('kpi-total').textContent    = allLeads.length;
+  document.getElementById('kpi-neu').textContent      = allLeads.filter(l => l.status === 'neu').length;
+  document.getElementById('kpi-termin').textContent   = allLeads.filter(l => l.status === 'termin').length;
+  document.getElementById('kpi-abschluss').textContent = allLeads.filter(l => l.status === 'abschluss').length;
+}
+
+// ── RENDER TABLE ──────────────────────────────────────
+function renderTable(leads) {
+  const tbody = document.getElementById('leads-table-body');
+  if (!leads.length) {
+    tbody.innerHTML = `<tr><td colspan="6"><div class="empty-state">
+      <svg width="40" height="40" fill="none" stroke="currentColor" stroke-width="1.5" viewBox="0 0 24 24"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/></svg>
+      <p>Keine Leads gefunden</p></div></td></tr>`;
+    return;
+  }
+  tbody.innerHTML = leads.map(l => `
+    <tr onclick="openLead('${l.id}')">
+      <td>
+        <div class="lead-name">${esc(l.name)}</div>
+        <div class="lead-meta">${esc(l.email || '')}${l.phone ? ' · ' + esc(l.phone) : ''}</div>
+      </td>
+      <td>${scoreHTML(l.score)}</td>
+      <td>${budgetText(l.budget_min, l.budget_max)}</td>
+      <td>${esc(l.location || '–')}</td>
+      <td>${statusPill(l.status)}</td>
+      <td>${formatDate(l.created_at)}</td>
+    </tr>
+  `).join('');
+}
+
+// ── FILTER ────────────────────────────────────────────
+function filterLeads() {
+  const q      = document.getElementById('search-input').value.toLowerCase();
+  const status = document.getElementById('filter-status').value;
+  const score  = document.getElementById('filter-score').value;
+
+  let filtered = allLeads.filter(l => {
+    const matchQ = !q || [l.name, l.email, l.location].some(v => v && v.toLowerCase().includes(q));
+    const matchS = !status || l.status === status;
+    const matchScore = !score ||
+      (score === 'high' && l.score >= 7) ||
+      (score === 'mid'  && l.score >= 4 && l.score <= 6) ||
+      (score === 'low'  && l.score <= 3);
+    return matchQ && matchS && matchScore;
+  });
+  renderTable(filtered);
+}
+
+// ── OPEN LEAD MODAL ───────────────────────────────────
+async function openLead(id) {
+  currentLead = allLeads.find(l => l.id === id);
+  if (!currentLead) return;
+
+  document.getElementById('modal-name').textContent = currentLead.name;
+  document.getElementById('modal-sub').textContent  =
+    [currentLead.email, currentLead.phone].filter(Boolean).join(' · ') || 'Keine Kontaktdaten';
+
+  currentTab = 'details';
+  document.querySelectorAll('.modal-tab').forEach(t => t.classList.toggle('active', t.dataset.tab === 'details'));
+
+  renderModalDetails();
+  document.getElementById('modal-overlay').classList.add('open');
+}
+
+function closeModal() {
+  document.getElementById('modal-overlay').classList.remove('open');
+  currentLead = null;
+}
+function closeModalOnOverlay(e) {
+  if (e.target === document.getElementById('modal-overlay')) closeModal();
+}
+
+function switchTab(tab) {
+  currentTab = tab;
+  document.querySelectorAll('.modal-tab').forEach(t => t.classList.toggle('active', t.dataset.tab === tab));
+  if (tab === 'details')      renderModalDetails();
+  if (tab === 'notizen')      renderModalNotes();
+  if (tab === 'aktivitaeten') renderModalActivities();
+}
+
+// ── MODAL: DETAILS ────────────────────────────────────
+function renderModalDetails() {
+  const l = currentLead;
+  document.getElementById('modal-body').innerHTML = `
+    <div class="status-select-wrap">
+      <label>Status</label>
+      <select onchange="updateStatus(this.value)">
+        ${['neu','kontaktiert','termin','abschluss','verloren'].map(s =>
+          `<option value="${s}" ${l.status===s?'selected':''}>${capitalize(s)}</option>`
+        ).join('')}
+      </select>
+    </div>
+
+    ${l.ai_summary ? `
+    <div class="ai-summary-box">
+      <div class="ai-label">KI-Zusammenfassung</div>
+      <p>${esc(l.ai_summary)}</p>
+    </div>` : ''}
+
+    <div class="detail-grid">
+      <div class="detail-field"><label>Score</label><span>${l.score ? l.score + ' / 10' : '–'}</span></div>
+      <div class="detail-field"><label>Quelle</label><span>${esc(l.source || '–')}</span></div>
+      <div class="detail-field"><label>Budget</label><span>${budgetText(l.budget_min, l.budget_max)}</span></div>
+      <div class="detail-field"><label>Zeitrahmen</label><span>${esc(l.timeframe || '–')}</span></div>
+      <div class="detail-field"><label>Ort</label><span>${esc(l.location || '–')}</span></div>
+      <div class="detail-field"><label>Objekttyp</label><span>${esc(l.property_type || '–')}</span></div>
+      <div class="detail-field"><label>E-Mail</label><span>${esc(l.email || '–')}</span></div>
+      <div class="detail-field"><label>Telefon</label><span>${esc(l.phone || '–')}</span></div>
+    </div>
+    <div class="detail-field" style="margin-top:4px">
+      <label>Eingang</label><span>${formatDate(l.created_at)}</span>
+    </div>
+  `;
+}
+
+async function updateStatus(newStatus) {
+  const { error } = await db
+    .from('makler_leads')
+    .update({ status: newStatus, updated_at: new Date().toISOString() })
+    .eq('id', currentLead.id);
+
+  if (!error) {
+    currentLead.status = newStatus;
+    allLeads = allLeads.map(l => l.id === currentLead.id ? { ...l, status: newStatus } : l);
+    updateKPIs();
+    filterLeads();
+  }
+}
+
+// ── MODAL: NOTES ──────────────────────────────────────
+async function renderModalNotes() {
+  document.getElementById('modal-body').innerHTML = `<div class="loading">Lade Notizen…</div>`;
+
+  const { data } = await db
+    .from('makler_notes')
+    .select('*')
+    .eq('lead_id', currentLead.id)
+    .order('created_at', { ascending: false });
+
+  const notes = data || [];
+  document.getElementById('modal-body').innerHTML = `
+    <div class="notes-list" id="notes-list">
+      ${notes.length ? notes.map(n => `
+        <div class="note-item">
+          <div class="note-meta">${formatDate(n.created_at)}</div>
+          <div class="note-content">${esc(n.content)}</div>
+        </div>
+      `).join('') : '<p style="color:var(--muted);font-size:13px">Noch keine Notizen.</p>'}
+    </div>
+    <div class="add-note-area">
+      <textarea id="note-input" placeholder="Neue Notiz…"></textarea>
+      <button class="btn btn-primary" onclick="addNote()">Notiz speichern</button>
+    </div>
+  `;
+}
+
+async function addNote() {
+  const content = document.getElementById('note-input').value.trim();
+  if (!content) return;
+  const { error } = await db.from('makler_notes').insert({ lead_id: currentLead.id, content });
+  if (!error) renderModalNotes();
+}
+
+// ── MODAL: ACTIVITIES ────────────────────────────────
+async function renderModalActivities() {
+  document.getElementById('modal-body').innerHTML = `<div class="loading">Lade Aktivitäten…</div>`;
+
+  const { data } = await db
+    .from('makler_activities')
+    .select('*')
+    .eq('lead_id', currentLead.id)
+    .order('created_at', { ascending: false });
+
+  const acts = data || [];
+  const typeIcon = { email:'✉️', anruf:'📞', whatsapp:'💬', termin:'📅', notiz:'📝' };
+
+  document.getElementById('modal-body').innerHTML = `
+    <div class="activity-list">
+      ${acts.length ? acts.map(a => `
+        <div class="activity-item">
+          <div class="activity-icon">${typeIcon[a.type] || '•'}</div>
+          <div class="activity-info">
+            <div class="type">${capitalize(a.type)}</div>
+            ${a.content ? `<div class="content">${esc(a.content)}</div>` : ''}
+            <div class="date">${formatDate(a.created_at)}</div>
+          </div>
+        </div>
+      `).join('') : '<p style="color:var(--muted);font-size:13px">Noch keine Aktivitäten.</p>'}
+    </div>
+  `;
+}
+
+// ── NEW LEAD (Platzhalter) ────────────────────────────
+function openNewLeadModal() {
+  alert('Neuer Lead – Formular kommt noch.');
+}
+
+// ── HELPERS ──────────────────────────────────────────
+function esc(s) {
+  if (!s) return '';
+  return s.replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;');
+}
+function capitalize(s) { return s ? s.charAt(0).toUpperCase() + s.slice(1) : ''; }
+function formatDate(iso) {
+  if (!iso) return '–';
+  return new Date(iso).toLocaleDateString('de-DE', { day:'2-digit', month:'2-digit', year:'numeric' });
+}
+function budgetText(min, max) {
+  if (!min && !max) return '–';
+  const fmt = n => n >= 1000 ? (n/1000).toFixed(0) + 'k' : n;
+  if (min && max) return fmt(min) + ' – ' + fmt(max) + ' €';
+  if (min) return 'ab ' + fmt(min) + ' €';
+  return 'bis ' + fmt(max) + ' €';
+}
+function scoreHTML(score) {
+  if (!score) return '<span style="color:var(--muted)">–</span>';
+  const cls = score >= 7 ? 'score-high' : score >= 4 ? 'score-mid' : 'score-low';
+  return `<span class="score-badge ${cls}">${score}</span>`;
+}
+function statusPill(status) {
+  const map = { neu:'Neu', kontaktiert:'Kontaktiert', termin:'Termin', abschluss:'Abschluss', verloren:'Verloren' };
+  return `<span class="status-pill s-${status}">${map[status] || status}</span>`;
+}
+</script>
+</body>
+</html>
