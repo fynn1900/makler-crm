@@ -402,9 +402,198 @@
 
     /* Loading */
     .loading { text-align: center; padding: 40px; color: var(--muted); font-size: 14px; }
+
+    /* ── LOGIN SCREEN ── */
+    #login-screen {
+      display: none;
+      position: fixed;
+      inset: 0;
+      background: var(--navy);
+      z-index: 999;
+      align-items: center;
+      justify-content: center;
+    }
+    #login-screen.visible { display: flex; }
+    .login-box {
+      background: #fff;
+      border-radius: 12px;
+      padding: 40px 44px;
+      width: 380px;
+      box-shadow: 0 20px 60px rgba(0,0,0,0.3);
+    }
+    .login-logo { font-size: 22px; font-weight: 800; color: var(--navy); margin-bottom: 4px; }
+    .login-sub  { font-size: 13px; color: var(--muted); margin-bottom: 32px; }
+    .login-field { margin-bottom: 16px; }
+    .login-field label { display: block; font-size: 12px; font-weight: 600; color: var(--muted); text-transform: uppercase; letter-spacing: 0.4px; margin-bottom: 6px; }
+    .login-field input {
+      width: 100%;
+      border: 1px solid var(--border);
+      border-radius: 7px;
+      padding: 10px 13px;
+      font-size: 14px;
+      color: var(--text);
+      outline: none;
+      transition: border-color 0.15s;
+    }
+    .login-field input:focus { border-color: var(--accent); }
+    .login-btn {
+      width: 100%;
+      padding: 11px;
+      background: var(--accent);
+      color: #fff;
+      border: none;
+      border-radius: 7px;
+      font-size: 14px;
+      font-weight: 600;
+      cursor: pointer;
+      margin-top: 8px;
+      transition: background 0.15s;
+    }
+    .login-btn:hover { background: var(--accent-hover); }
+    .login-error { font-size: 13px; color: var(--danger); margin-top: 12px; text-align: center; min-height: 18px; }
+
+    /* ── SIDEBAR USER ── */
+    .sidebar-user {
+      padding: 12px 20px;
+      border-top: 1px solid var(--navy-mid);
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+    .sidebar-user .user-info { flex: 1; min-width: 0; }
+    .sidebar-user .user-email { font-size: 11px; color: #7a9cc0; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+    .sidebar-user .user-role  { font-size: 10px; color: #4e6a8a; text-transform: uppercase; letter-spacing: 0.5px; }
+    .logout-btn {
+      background: none;
+      border: none;
+      color: #4e6a8a;
+      cursor: pointer;
+      padding: 4px;
+      flex-shrink: 0;
+    }
+    .logout-btn:hover { color: #a8bfd4; }
+
+    /* ── ADMIN VIEW ── */
+    .admin-section {
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: 8px;
+      margin-bottom: 24px;
+      overflow: hidden;
+    }
+    .admin-section-header {
+      padding: 16px 20px;
+      border-bottom: 1px solid var(--border);
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+    }
+    .admin-section-header h3 { font-size: 15px; font-weight: 600; }
+    .admin-section-header p  { font-size: 12px; color: var(--muted); margin-top: 2px; }
+    .admin-section-body { padding: 20px; }
+
+    .makler-list { display: flex; flex-direction: column; gap: 10px; margin-bottom: 20px; }
+    .makler-item {
+      display: flex;
+      align-items: center;
+      gap: 14px;
+      padding: 14px 16px;
+      background: var(--bg);
+      border: 1px solid var(--border);
+      border-radius: 7px;
+    }
+    .makler-avatar {
+      width: 36px;
+      height: 36px;
+      border-radius: 8px;
+      background: var(--navy-mid);
+      color: #fff;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 14px;
+      font-weight: 700;
+      flex-shrink: 0;
+    }
+    .makler-info { flex: 1; min-width: 0; }
+    .makler-info .m-name  { font-size: 14px; font-weight: 600; }
+    .makler-info .m-email { font-size: 12px; color: var(--muted); margin-top: 1px; }
+    .makler-leads-count { font-size: 12px; color: var(--muted); white-space: nowrap; }
+    .makler-delete {
+      background: none;
+      border: none;
+      color: #ccc;
+      cursor: pointer;
+      padding: 4px;
+      flex-shrink: 0;
+    }
+    .makler-delete:hover { color: var(--danger); }
+
+    .form-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 14px; }
+    .form-field { display: flex; flex-direction: column; gap: 5px; }
+    .form-field.full { grid-column: 1 / -1; }
+    .form-field label { font-size: 11px; font-weight: 600; color: var(--muted); text-transform: uppercase; letter-spacing: 0.4px; }
+    .form-field input {
+      border: 1px solid var(--border);
+      border-radius: 6px;
+      padding: 8px 11px;
+      font-size: 13px;
+      color: var(--text);
+      background: var(--bg);
+      outline: none;
+    }
+    .form-field input:focus { border-color: var(--accent); background: #fff; }
+    .form-actions { margin-top: 16px; display: flex; gap: 10px; }
+
+    .settings-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 20px; }
+    .setting-item { display: flex; flex-direction: column; gap: 6px; }
+    .setting-item label { font-size: 11px; font-weight: 600; color: var(--muted); text-transform: uppercase; letter-spacing: 0.4px; }
+    .setting-item input, .setting-item select {
+      border: 1px solid var(--border);
+      border-radius: 6px;
+      padding: 8px 11px;
+      font-size: 13px;
+      color: var(--text);
+      background: var(--bg);
+      outline: none;
+    }
+    .setting-item input:focus, .setting-item select:focus { border-color: var(--accent); background: #fff; }
+    .setting-hint { font-size: 11px; color: var(--muted); }
+
+    .admin-badge {
+      display: inline-flex;
+      align-items: center;
+      padding: 2px 8px;
+      background: rgba(46,111,186,0.15);
+      color: var(--accent);
+      border-radius: 4px;
+      font-size: 10px;
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+      margin-left: 8px;
+    }
   </style>
 </head>
 <body>
+
+<!-- LOGIN -->
+<div id="login-screen" class="visible">
+  <div class="login-box">
+    <div class="login-logo">Optriq CRM</div>
+    <div class="login-sub">Immobilien-Lead-Management</div>
+    <div class="login-field">
+      <label>E-Mail</label>
+      <input type="email" id="login-email" placeholder="admin@optriq.de" />
+    </div>
+    <div class="login-field">
+      <label>Passwort</label>
+      <input type="password" id="login-password" placeholder="••••••••" onkeydown="if(event.key==='Enter') doLogin()" />
+    </div>
+    <button class="login-btn" onclick="doLogin()">Anmelden</button>
+    <div class="login-error" id="login-error"></div>
+  </div>
+</div>
 
 <!-- SIDEBAR -->
 <aside id="sidebar">
@@ -422,8 +611,22 @@
       <svg width="16" height="16" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><rect x="2" y="7" width="20" height="14" rx="2"/><path d="M16 21V5a2 2 0 0 0-2-2h-4a2 2 0 0 0-2 2v16"/></svg>
       Kunden
     </div>
+    <div class="nav-section" id="nav-admin-section" style="display:none">Admin</div>
+    <div class="nav-item" data-view="admin" id="nav-admin" style="display:none" onclick="switchView('admin')">
+      <svg width="16" height="16" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><circle cx="12" cy="8" r="4"/><path d="M20 21a8 8 0 1 0-16 0"/><path d="M16 11l1.5 1.5L20 10"/></svg>
+      Administration
+    </div>
   </nav>
-  <div class="sidebar-footer">v1.0 · Optriq</div>
+  <div class="sidebar-user" id="sidebar-user" style="display:none">
+    <div class="user-info">
+      <div class="user-email" id="user-email-display">–</div>
+      <div class="user-role" id="user-role-display">–</div>
+    </div>
+    <button class="logout-btn" onclick="doLogout()" title="Abmelden">
+      <svg width="16" height="16" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"/><polyline points="16 17 21 12 16 7"/><line x1="21" y1="12" x2="9" y2="12"/></svg>
+    </button>
+  </div>
+  <div class="sidebar-footer" id="sidebar-footer" style="display:none">v1.0 · Optriq</div>
 </aside>
 
 <!-- MAIN -->
@@ -483,6 +686,112 @@
           </tbody>
         </table>
       </div>
+    </div>
+
+    <!-- VIEW: ADMIN -->
+    <div id="view-admin" style="display:none">
+
+      <!-- Makler verwalten -->
+      <div class="admin-section">
+        <div class="admin-section-header">
+          <div>
+            <h3>Makler-Kunden</h3>
+            <p>Alle angebundenen Maklerbüros</p>
+          </div>
+        </div>
+        <div class="admin-section-body">
+          <div class="makler-list" id="makler-list">
+            <div class="loading">Lade Makler…</div>
+          </div>
+          <hr style="border:none;border-top:1px solid var(--border);margin-bottom:20px">
+          <h4 style="font-size:13px;font-weight:600;margin-bottom:14px;color:var(--text)">Neuen Makler anlegen</h4>
+          <div class="form-grid">
+            <div class="form-field">
+              <label>Name / Firma *</label>
+              <input type="text" id="m-name" placeholder="Müller Immobilien GmbH" />
+            </div>
+            <div class="form-field">
+              <label>E-Mail</label>
+              <input type="email" id="m-email" placeholder="info@mueller-immo.de" />
+            </div>
+            <div class="form-field">
+              <label>Telefon</label>
+              <input type="text" id="m-phone" placeholder="+49 30 123456" />
+            </div>
+            <div class="form-field">
+              <label>Logo-URL</label>
+              <input type="text" id="m-logo" placeholder="https://…" />
+            </div>
+          </div>
+          <div class="form-actions">
+            <button class="btn btn-primary" onclick="createMakler()">Makler anlegen</button>
+          </div>
+        </div>
+      </div>
+
+      <!-- Einstellungen -->
+      <div class="admin-section">
+        <div class="admin-section-header">
+          <div>
+            <h3>Einstellungen</h3>
+            <p>Systemweite Konfiguration</p>
+          </div>
+          <button class="btn btn-primary" onclick="saveSettings()">Speichern</button>
+        </div>
+        <div class="admin-section-body">
+          <div class="settings-grid">
+            <div class="setting-item">
+              <label>Dashboard-Name</label>
+              <input type="text" id="s-dashboard-name" placeholder="Optriq CRM" />
+              <span class="setting-hint">Wird in der Sidebar angezeigt</span>
+            </div>
+            <div class="setting-item">
+              <label>Min. Lead-Score anzeigen</label>
+              <select id="s-min-score">
+                <option value="0">Alle (1–10)</option>
+                <option value="4">Mittel+ (4–10)</option>
+                <option value="7">Nur Hoch (7–10)</option>
+              </select>
+              <span class="setting-hint">Filtert Leads in der Übersicht</span>
+            </div>
+            <div class="setting-item">
+              <label>Standard-Status neuer Leads</label>
+              <select id="s-default-status">
+                <option value="neu">Neu</option>
+                <option value="kontaktiert">Kontaktiert</option>
+              </select>
+            </div>
+            <div class="setting-item">
+              <label>Benachrichtigungs-E-Mail</label>
+              <input type="email" id="s-notify-email" placeholder="fynn@optriq.de" />
+              <span class="setting-hint">Für neue Leads (n8n Webhook)</span>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Zugänge -->
+      <div class="admin-section">
+        <div class="admin-section-header">
+          <div>
+            <h3>Admin-Zugänge</h3>
+            <p>Passwörter werden direkt in Supabase Auth verwaltet</p>
+          </div>
+          <a href="https://supabase.com/dashboard/project/rmogxnkbzxvktillhtfg/auth/users" target="_blank" class="btn btn-ghost" style="text-decoration:none">
+            Supabase Auth öffnen
+            <svg width="12" height="12" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"/><polyline points="15 3 21 3 21 9"/><line x1="10" y1="14" x2="21" y2="3"/></svg>
+          </a>
+        </div>
+        <div class="admin-section-body" style="padding:16px 20px">
+          <p style="font-size:13px;color:var(--muted)">Neue Nutzer über Supabase Dashboard anlegen → <strong>Authentication → Users → Invite</strong>.<br>Admins erhalten Zugang zum Admin-Panel durch Eintrag ihrer E-Mail unten.</p>
+          <div style="margin-top:16px;display:flex;gap:10px;align-items:center">
+            <input type="email" id="new-admin-email" placeholder="neue@email.de" style="border:1px solid var(--border);border-radius:6px;padding:8px 11px;font-size:13px;color:var(--text);background:var(--bg);outline:none;flex:1" />
+            <button class="btn btn-primary" onclick="addAdminEmail()">Als Admin markieren</button>
+          </div>
+          <div id="admin-email-list" style="margin-top:14px;display:flex;flex-direction:column;gap:6px"></div>
+        </div>
+      </div>
+
     </div>
 
     <!-- VIEW: KUNDEN -->
@@ -561,11 +870,74 @@ let allLeads = [];
 let currentLead = null;
 let currentTab = 'details';
 let currentView = 'leads';
+let currentUser = null;
+
+// Admin-E-Mails (in localStorage gespeichert)
+function getAdminEmails() {
+  try { return JSON.parse(localStorage.getItem('crm_admins') || '[]'); } catch { return []; }
+}
+function saveAdminEmails(list) { localStorage.setItem('crm_admins', JSON.stringify(list)); }
+function isAdmin(email) { return getAdminEmails().includes(email?.toLowerCase()); }
+
+// Settings
+function getSettings() {
+  try { return JSON.parse(localStorage.getItem('crm_settings') || '{}'); } catch { return {}; }
+}
+function saveSettingsData(obj) { localStorage.setItem('crm_settings', JSON.stringify({ ...getSettings(), ...obj })); }
 
 // ── INIT ──────────────────────────────────────────────
-document.addEventListener('DOMContentLoaded', () => {
-  loadLeads();
+document.addEventListener('DOMContentLoaded', async () => {
+  const { data: { session } } = await db.auth.getSession();
+  if (session) {
+    onLoginSuccess(session.user);
+  } else {
+    document.getElementById('login-screen').classList.add('visible');
+  }
 });
+
+// ── AUTH ──────────────────────────────────────────────
+async function doLogin() {
+  const email    = document.getElementById('login-email').value.trim();
+  const password = document.getElementById('login-password').value;
+  const errEl    = document.getElementById('login-error');
+  errEl.textContent = '';
+
+  if (!email || !password) { errEl.textContent = 'Bitte E-Mail und Passwort eingeben.'; return; }
+
+  const { data, error } = await db.auth.signInWithPassword({ email, password });
+  if (error) { errEl.textContent = 'Anmeldung fehlgeschlagen: ' + error.message; return; }
+  onLoginSuccess(data.user);
+}
+
+function onLoginSuccess(user) {
+  currentUser = user;
+  document.getElementById('login-screen').classList.remove('visible');
+  document.getElementById('sidebar-user').style.display = '';
+  document.getElementById('sidebar-footer').style.display = '';
+  document.getElementById('user-email-display').textContent = user.email;
+
+  const admin = isAdmin(user.email);
+  document.getElementById('user-role-display').textContent = admin ? 'Admin' : 'Mitarbeiter';
+  if (admin) {
+    document.getElementById('nav-admin-section').style.display = '';
+    document.getElementById('nav-admin').style.display = '';
+  }
+  loadLeads();
+  applySettings();
+}
+
+async function doLogout() {
+  await db.auth.signOut();
+  currentUser = null;
+  allLeads = [];
+  document.getElementById('login-screen').classList.add('visible');
+  document.getElementById('sidebar-user').style.display = 'none';
+  document.getElementById('sidebar-footer').style.display = 'none';
+  document.getElementById('nav-admin-section').style.display = 'none';
+  document.getElementById('nav-admin').style.display = 'none';
+  document.getElementById('login-email').value = '';
+  document.getElementById('login-password').value = '';
+}
 
 // ── VIEW SWITCH ───────────────────────────────────────
 function switchView(view) {
@@ -575,9 +947,12 @@ function switchView(view) {
   });
   document.getElementById('view-leads').style.display  = view === 'leads'  ? '' : 'none';
   document.getElementById('view-kunden').style.display = view === 'kunden' ? '' : 'none';
-  document.getElementById('view-title').textContent    = view === 'leads'  ? 'Leads' : 'Kunden';
+  document.getElementById('view-admin').style.display  = view === 'admin'  ? '' : 'none';
+  const titles = { leads: 'Leads', kunden: 'Kunden', admin: 'Administration' };
+  document.getElementById('view-title').textContent = titles[view] || view;
   document.getElementById('btn-new-lead').style.display = view === 'leads' ? '' : 'none';
   if (view === 'kunden') renderKunden(allLeads);
+  if (view === 'admin')  loadAdminView();
 }
 
 // ── LOAD ──────────────────────────────────────────────
@@ -841,6 +1216,116 @@ async function renderModalActivities() {
 // ── NEW LEAD (Platzhalter) ────────────────────────────
 function openNewLeadModal() {
   alert('Neuer Lead – Formular kommt noch.');
+}
+
+// ── ADMIN: MAKLER ────────────────────────────────────
+async function loadAdminView() {
+  await loadMaklerList();
+  loadAdminEmailList();
+  loadSettingsForm();
+}
+
+async function loadMaklerList() {
+  const { data } = await db.from('makler_clients').select('*').order('created_at', { ascending: false });
+  const list = data || [];
+  const el = document.getElementById('makler-list');
+  if (!list.length) {
+    el.innerHTML = '<p style="font-size:13px;color:var(--muted)">Noch keine Makler angelegt.</p>';
+    return;
+  }
+  el.innerHTML = list.map(m => {
+    const leads = allLeads.filter(l => l.client_id === m.id).length;
+    return `
+    <div class="makler-item">
+      <div class="makler-avatar">${m.name.charAt(0).toUpperCase()}</div>
+      <div class="makler-info">
+        <div class="m-name">${esc(m.name)}</div>
+        <div class="m-email">${esc(m.email || m.phone || '–')}</div>
+      </div>
+      <span class="makler-leads-count">${leads} Lead${leads !== 1 ? 's' : ''}</span>
+      <button class="makler-delete" onclick="deleteMakler('${m.id}')" title="Löschen">
+        <svg width="15" height="15" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><polyline points="3 6 5 6 21 6"/><path d="M19 6l-1 14a2 2 0 0 1-2 2H8a2 2 0 0 1-2-2L5 6"/><path d="M10 11v6"/><path d="M14 11v6"/></svg>
+      </button>
+    </div>`;
+  }).join('');
+}
+
+async function createMakler() {
+  const name  = document.getElementById('m-name').value.trim();
+  const email = document.getElementById('m-email').value.trim();
+  const phone = document.getElementById('m-phone').value.trim();
+  const logo  = document.getElementById('m-logo').value.trim();
+  if (!name) { alert('Name ist Pflichtfeld.'); return; }
+
+  const { error } = await db.from('makler_clients').insert({ name, email: email||null, phone: phone||null, logo_url: logo||null });
+  if (!error) {
+    document.getElementById('m-name').value = '';
+    document.getElementById('m-email').value = '';
+    document.getElementById('m-phone').value = '';
+    document.getElementById('m-logo').value = '';
+    loadMaklerList();
+  }
+}
+
+async function deleteMakler(id) {
+  if (!confirm('Makler löschen? Alle zugehörigen Leads werden ebenfalls gelöscht.')) return;
+  await db.from('makler_clients').delete().eq('id', id);
+  allLeads = allLeads.filter(l => l.client_id !== id);
+  updateKPIs();
+  loadMaklerList();
+}
+
+// ── ADMIN: SETTINGS ──────────────────────────────────
+function loadSettingsForm() {
+  const s = getSettings();
+  document.getElementById('s-dashboard-name').value   = s.dashboardName  || '';
+  document.getElementById('s-min-score').value        = s.minScore       || '0';
+  document.getElementById('s-default-status').value   = s.defaultStatus  || 'neu';
+  document.getElementById('s-notify-email').value     = s.notifyEmail    || '';
+}
+
+function saveSettings() {
+  saveSettingsData({
+    dashboardName: document.getElementById('s-dashboard-name').value.trim(),
+    minScore:      document.getElementById('s-min-score').value,
+    defaultStatus: document.getElementById('s-default-status').value,
+    notifyEmail:   document.getElementById('s-notify-email').value.trim(),
+  });
+  applySettings();
+  alert('Einstellungen gespeichert.');
+}
+
+function applySettings() {
+  const s = getSettings();
+  if (s.dashboardName) document.querySelector('.sidebar-logo .brand').textContent = s.dashboardName;
+}
+
+// ── ADMIN: EMAIL-LISTE ───────────────────────────────
+function loadAdminEmailList() {
+  const emails = getAdminEmails();
+  const el = document.getElementById('admin-email-list');
+  if (!emails.length) { el.innerHTML = '<p style="font-size:12px;color:var(--muted)">Noch keine Admin-E-Mails.</p>'; return; }
+  el.innerHTML = emails.map(e => `
+    <div style="display:flex;align-items:center;gap:10px;padding:8px 12px;background:var(--bg);border:1px solid var(--border);border-radius:6px">
+      <span style="font-size:13px;flex:1">${esc(e)}</span>
+      <span class="admin-badge">Admin</span>
+      <button onclick="removeAdminEmail('${esc(e)}')" style="background:none;border:none;cursor:pointer;color:#ccc;font-size:16px;line-height:1" title="Entfernen">×</button>
+    </div>
+  `).join('');
+}
+
+function addAdminEmail() {
+  const email = document.getElementById('new-admin-email').value.trim().toLowerCase();
+  if (!email) return;
+  const list = getAdminEmails();
+  if (!list.includes(email)) { list.push(email); saveAdminEmails(list); }
+  document.getElementById('new-admin-email').value = '';
+  loadAdminEmailList();
+}
+
+function removeAdminEmail(email) {
+  saveAdminEmails(getAdminEmails().filter(e => e !== email));
+  loadAdminEmailList();
 }
 
 // ── HELPERS ──────────────────────────────────────────
