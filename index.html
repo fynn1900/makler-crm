@@ -414,13 +414,13 @@
   </div>
   <nav class="sidebar-nav">
     <div class="nav-section">Verwaltung</div>
-    <div class="nav-item active" data-view="leads">
+    <div class="nav-item active" data-view="leads" onclick="switchView('leads')">
       <svg width="16" height="16" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/></svg>
       Leads
     </div>
-    <div class="nav-item" data-view="kunden">
+    <div class="nav-item" data-view="kunden" onclick="switchView('kunden')">
       <svg width="16" height="16" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><rect x="2" y="7" width="20" height="14" rx="2"/><path d="M16 21V5a2 2 0 0 0-2-2h-4a2 2 0 0 0-2 2v16"/></svg>
-      Kunden (Makler)
+      Kunden
     </div>
   </nav>
   <div class="sidebar-footer">v1.0 · Optriq</div>
@@ -437,62 +437,94 @@
   </div>
 
   <div id="content">
-    <!-- KPIs -->
-    <div class="kpi-row" id="kpi-row">
-      <div class="kpi-card">
-        <div class="kpi-label">Gesamt Leads</div>
-        <div class="kpi-value" id="kpi-total">–</div>
+    <!-- VIEW: LEADS -->
+    <div id="view-leads">
+      <div class="kpi-row">
+        <div class="kpi-card">
+          <div class="kpi-label">Gesamt Leads</div>
+          <div class="kpi-value" id="kpi-total">–</div>
+        </div>
+        <div class="kpi-card">
+          <div class="kpi-label">Neu</div>
+          <div class="kpi-value" id="kpi-neu">–</div>
+        </div>
+        <div class="kpi-card">
+          <div class="kpi-label">Kontaktiert</div>
+          <div class="kpi-value" id="kpi-kontaktiert">–</div>
+        </div>
+        <div class="kpi-card">
+          <div class="kpi-label">Verloren</div>
+          <div class="kpi-value" id="kpi-verloren">–</div>
+        </div>
       </div>
-      <div class="kpi-card">
-        <div class="kpi-label">Neu</div>
-        <div class="kpi-value" id="kpi-neu">–</div>
+      <div class="filter-bar">
+        <input type="text" id="search-input" placeholder="Name, E-Mail, Ort suchen…" oninput="filterLeads()" />
+        <select id="filter-status" onchange="filterLeads()">
+          <option value="">Alle Status</option>
+          <option value="neu">Neu</option>
+          <option value="kontaktiert">Kontaktiert</option>
+        </select>
+        <select id="filter-score" onchange="filterLeads()">
+          <option value="">Alle Scores</option>
+          <option value="high">Hoch (7–10)</option>
+          <option value="mid">Mittel (4–6)</option>
+          <option value="low">Niedrig (1–3)</option>
+        </select>
       </div>
-      <div class="kpi-card">
-        <div class="kpi-label">Termine</div>
-        <div class="kpi-value" id="kpi-termin">–</div>
-      </div>
-      <div class="kpi-card">
-        <div class="kpi-label">Abschlüsse</div>
-        <div class="kpi-value" id="kpi-abschluss">–</div>
+      <div class="table-wrap">
+        <table>
+          <thead>
+            <tr>
+              <th>Lead</th><th>Score</th><th>Budget</th><th>Ort</th><th>Status</th><th>Eingang</th>
+            </tr>
+          </thead>
+          <tbody id="leads-table-body">
+            <tr><td colspan="6"><div class="loading">Lade Leads…</div></td></tr>
+          </tbody>
+        </table>
       </div>
     </div>
 
-    <!-- FILTER BAR -->
-    <div class="filter-bar">
-      <input type="text" id="search-input" placeholder="Name, E-Mail, Ort suchen…" oninput="filterLeads()" />
-      <select id="filter-status" onchange="filterLeads()">
-        <option value="">Alle Status</option>
-        <option value="neu">Neu</option>
-        <option value="kontaktiert">Kontaktiert</option>
-        <option value="termin">Termin</option>
-        <option value="abschluss">Abschluss</option>
-        <option value="verloren">Verloren</option>
-      </select>
-      <select id="filter-score" onchange="filterLeads()">
-        <option value="">Alle Scores</option>
-        <option value="high">Hoch (7–10)</option>
-        <option value="mid">Mittel (4–6)</option>
-        <option value="low">Niedrig (1–3)</option>
-      </select>
-    </div>
-
-    <!-- TABLE -->
-    <div class="table-wrap">
-      <table>
-        <thead>
-          <tr>
-            <th>Lead</th>
-            <th>Score</th>
-            <th>Budget</th>
-            <th>Ort</th>
-            <th>Status</th>
-            <th>Eingang</th>
-          </tr>
-        </thead>
-        <tbody id="leads-table-body">
-          <tr><td colspan="6"><div class="loading">Lade Leads…</div></td></tr>
-        </tbody>
-      </table>
+    <!-- VIEW: KUNDEN -->
+    <div id="view-kunden" style="display:none">
+      <div class="kpi-row">
+        <div class="kpi-card">
+          <div class="kpi-label">Kunden gesamt</div>
+          <div class="kpi-value" id="kpi-k-total">–</div>
+        </div>
+        <div class="kpi-card">
+          <div class="kpi-label">Termin vereinbart</div>
+          <div class="kpi-value" id="kpi-k-termin">–</div>
+        </div>
+        <div class="kpi-card">
+          <div class="kpi-label">Abschlüsse</div>
+          <div class="kpi-value" id="kpi-k-abschluss">–</div>
+        </div>
+        <div class="kpi-card">
+          <div class="kpi-label">Abschlussquote</div>
+          <div class="kpi-value" id="kpi-k-rate">–</div>
+        </div>
+      </div>
+      <div class="filter-bar">
+        <input type="text" id="k-search-input" placeholder="Name, E-Mail, Ort suchen…" oninput="filterKunden()" />
+        <select id="k-filter-status" onchange="filterKunden()">
+          <option value="">Termin &amp; Abschluss</option>
+          <option value="termin">Termin</option>
+          <option value="abschluss">Abschluss</option>
+        </select>
+      </div>
+      <div class="table-wrap">
+        <table>
+          <thead>
+            <tr>
+              <th>Kunde</th><th>Score</th><th>Budget</th><th>Ort</th><th>Status</th><th>Seit</th>
+            </tr>
+          </thead>
+          <tbody id="kunden-table-body">
+            <tr><td colspan="6"><div class="loading">Lade Kunden…</div></td></tr>
+          </tbody>
+        </table>
+      </div>
     </div>
   </div>
 </div>
@@ -528,11 +560,25 @@ const db = supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
 let allLeads = [];
 let currentLead = null;
 let currentTab = 'details';
+let currentView = 'leads';
 
 // ── INIT ──────────────────────────────────────────────
 document.addEventListener('DOMContentLoaded', () => {
   loadLeads();
 });
+
+// ── VIEW SWITCH ───────────────────────────────────────
+function switchView(view) {
+  currentView = view;
+  document.querySelectorAll('.nav-item').forEach(el => {
+    el.classList.toggle('active', el.dataset.view === view);
+  });
+  document.getElementById('view-leads').style.display  = view === 'leads'  ? '' : 'none';
+  document.getElementById('view-kunden').style.display = view === 'kunden' ? '' : 'none';
+  document.getElementById('view-title').textContent    = view === 'leads'  ? 'Leads' : 'Kunden';
+  document.getElementById('btn-new-lead').style.display = view === 'leads' ? '' : 'none';
+  if (view === 'kunden') renderKunden(allLeads);
+}
 
 // ── LOAD ──────────────────────────────────────────────
 async function loadLeads() {
@@ -544,14 +590,24 @@ async function loadLeads() {
   if (error) { console.error(error); return; }
   allLeads = data || [];
   updateKPIs();
-  renderTable(allLeads);
+  renderTable(allLeads.filter(l => ['neu','kontaktiert','verloren'].includes(l.status)));
 }
 
 function updateKPIs() {
-  document.getElementById('kpi-total').textContent    = allLeads.length;
-  document.getElementById('kpi-neu').textContent      = allLeads.filter(l => l.status === 'neu').length;
-  document.getElementById('kpi-termin').textContent   = allLeads.filter(l => l.status === 'termin').length;
-  document.getElementById('kpi-abschluss').textContent = allLeads.filter(l => l.status === 'abschluss').length;
+  const leads   = allLeads.filter(l => ['neu','kontaktiert'].includes(l.status));
+  const kunden  = allLeads.filter(l => ['termin','abschluss'].includes(l.status));
+  const abschl  = allLeads.filter(l => l.status === 'abschluss').length;
+
+  document.getElementById('kpi-total').textContent      = leads.length;
+  document.getElementById('kpi-neu').textContent        = allLeads.filter(l => l.status === 'neu').length;
+  document.getElementById('kpi-kontaktiert').textContent= allLeads.filter(l => l.status === 'kontaktiert').length;
+  document.getElementById('kpi-verloren').textContent   = allLeads.filter(l => l.status === 'verloren').length;
+
+  document.getElementById('kpi-k-total').textContent    = kunden.length;
+  document.getElementById('kpi-k-termin').textContent   = allLeads.filter(l => l.status === 'termin').length;
+  document.getElementById('kpi-k-abschluss').textContent= abschl;
+  document.getElementById('kpi-k-rate').textContent     = kunden.length
+    ? Math.round(abschl / kunden.length * 100) + '%' : '–';
 }
 
 // ── RENDER TABLE ──────────────────────────────────────
@@ -578,13 +634,15 @@ function renderTable(leads) {
   `).join('');
 }
 
-// ── FILTER ────────────────────────────────────────────
+// ── FILTER LEADS ──────────────────────────────────────
 function filterLeads() {
   const q      = document.getElementById('search-input').value.toLowerCase();
   const status = document.getElementById('filter-status').value;
   const score  = document.getElementById('filter-score').value;
 
+  // Leads = nur neu + kontaktiert + verloren (alles vor Termin)
   let filtered = allLeads.filter(l => {
+    if (!['neu','kontaktiert','verloren'].includes(l.status)) return false;
     const matchQ = !q || [l.name, l.email, l.location].some(v => v && v.toLowerCase().includes(q));
     const matchS = !status || l.status === status;
     const matchScore = !score ||
@@ -594,6 +652,45 @@ function filterLeads() {
     return matchQ && matchS && matchScore;
   });
   renderTable(filtered);
+}
+
+// ── FILTER + RENDER KUNDEN ────────────────────────────
+function filterKunden() {
+  const q      = document.getElementById('k-search-input').value.toLowerCase();
+  const status = document.getElementById('k-filter-status').value;
+
+  let filtered = allLeads.filter(l => {
+    if (!['termin','abschluss'].includes(l.status)) return false;
+    const matchQ = !q || [l.name, l.email, l.location].some(v => v && v.toLowerCase().includes(q));
+    const matchS = !status || l.status === status;
+    return matchQ && matchS;
+  });
+  renderKunden(filtered);
+}
+
+function renderKunden(source) {
+  const kunden = source.filter(l => ['termin','abschluss'].includes(l.status));
+  const tbody  = document.getElementById('kunden-table-body');
+  if (!kunden.length) {
+    tbody.innerHTML = `<tr><td colspan="6"><div class="empty-state">
+      <svg width="40" height="40" fill="none" stroke="currentColor" stroke-width="1.5" viewBox="0 0 24 24"><rect x="2" y="7" width="20" height="14" rx="2"/><path d="M16 21V5a2 2 0 0 0-2-2h-4a2 2 0 0 0-2 2v16"/></svg>
+      <p>Noch keine Kunden – sobald ein Lead auf "Termin" gesetzt wird, erscheint er hier.</p>
+    </div></td></tr>`;
+    return;
+  }
+  tbody.innerHTML = kunden.map(l => `
+    <tr onclick="openLead('${l.id}')">
+      <td>
+        <div class="lead-name">${esc(l.name)}</div>
+        <div class="lead-meta">${esc(l.email || '')}${l.phone ? ' · ' + esc(l.phone) : ''}</div>
+      </td>
+      <td>${scoreHTML(l.score)}</td>
+      <td>${budgetText(l.budget_min, l.budget_max)}</td>
+      <td>${esc(l.location || '–')}</td>
+      <td>${statusPill(l.status)}</td>
+      <td>${formatDate(l.updated_at || l.created_at)}</td>
+    </tr>
+  `).join('');
 }
 
 // ── OPEN LEAD MODAL ───────────────────────────────────
@@ -673,7 +770,8 @@ async function updateStatus(newStatus) {
     currentLead.status = newStatus;
     allLeads = allLeads.map(l => l.id === currentLead.id ? { ...l, status: newStatus } : l);
     updateKPIs();
-    filterLeads();
+    if (currentView === 'leads') filterLeads();
+    else filterKunden();
   }
 }
 
