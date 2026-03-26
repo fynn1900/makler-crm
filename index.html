@@ -770,25 +770,44 @@
         </div>
       </div>
 
-      <!-- Zugänge -->
+      <!-- Nutzerverwaltung -->
       <div class="admin-section">
         <div class="admin-section-header">
           <div>
-            <h3>Admin-Zugänge</h3>
-            <p>Passwörter werden direkt in Supabase Auth verwaltet</p>
+            <h3>Nutzerverwaltung</h3>
+            <p>Logins anlegen, Rollen vergeben, Nutzer löschen</p>
           </div>
-          <a href="https://supabase.com/dashboard/project/rmogxnkbzxvktillhtfg/auth/users" target="_blank" class="btn btn-ghost" style="text-decoration:none">
-            Supabase Auth öffnen
-            <svg width="12" height="12" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"/><polyline points="15 3 21 3 21 9"/><line x1="10" y1="14" x2="21" y2="3"/></svg>
-          </a>
         </div>
-        <div class="admin-section-body" style="padding:16px 20px">
-          <p style="font-size:13px;color:var(--muted)">Neue Nutzer über Supabase Dashboard anlegen → <strong>Authentication → Users → Invite</strong>.<br>Admins erhalten Zugang zum Admin-Panel durch Eintrag ihrer E-Mail unten.</p>
-          <div style="margin-top:16px;display:flex;gap:10px;align-items:center">
-            <input type="email" id="new-admin-email" placeholder="neue@email.de" style="border:1px solid var(--border);border-radius:6px;padding:8px 11px;font-size:13px;color:var(--text);background:var(--bg);outline:none;flex:1" />
-            <button class="btn btn-primary" onclick="addAdminEmail()">Als Admin markieren</button>
+        <div class="admin-section-body">
+          <div id="user-list" style="display:flex;flex-direction:column;gap:8px;margin-bottom:20px">
+            <div class="loading">Lade Nutzer…</div>
           </div>
-          <div id="admin-email-list" style="margin-top:14px;display:flex;flex-direction:column;gap:6px"></div>
+          <hr style="border:none;border-top:1px solid var(--border);margin-bottom:20px">
+          <h4 style="font-size:13px;font-weight:600;margin-bottom:14px;color:var(--text)">Neuen Nutzer anlegen</h4>
+          <div class="form-grid">
+            <div class="form-field">
+              <label>E-Mail *</label>
+              <input type="email" id="nu-email" placeholder="makler@beispiel.de" />
+            </div>
+            <div class="form-field">
+              <label>Passwort *</label>
+              <input type="password" id="nu-password" placeholder="Mindestens 6 Zeichen" />
+            </div>
+            <div class="form-field">
+              <label>Name (optional)</label>
+              <input type="text" id="nu-name" placeholder="Max Mustermann" />
+            </div>
+            <div class="form-field" style="justify-content:flex-end;padding-bottom:2px">
+              <label style="display:flex;align-items:center;gap:8px;cursor:pointer;text-transform:none;letter-spacing:0;font-size:13px;font-weight:500;color:var(--text)">
+                <input type="checkbox" id="nu-admin" style="width:auto;padding:0;border:none;background:none" />
+                Admin-Rechte vergeben
+              </label>
+            </div>
+          </div>
+          <div class="form-actions">
+            <button class="btn btn-primary" onclick="createUser()">Nutzer anlegen</button>
+          </div>
+          <div id="nu-error" style="font-size:13px;color:var(--danger);margin-top:10px;min-height:18px"></div>
         </div>
       </div>
 
@@ -863,8 +882,10 @@
 
 <script>
 const SUPABASE_URL  = 'https://rmogxnkbzxvktillhtfg.supabase.co';
-const SUPABASE_KEY  = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InJtb2d4bmtienh2a3RpbGxodGZnIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzI4MDcyNzYsImV4cCI6MjA4ODM4MzI3Nn0.gPvonbhjNBuxv2J7C9GBQjpwdEyrRr4DCaIp6G7CRyw';
-const db = supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
+const SUPABASE_KEY        = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InJtb2d4bmtienh2a3RpbGxodGZnIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzI4MDcyNzYsImV4cCI6MjA4ODM4MzI3Nn0.gPvonbhjNBuxv2J7C9GBQjpwdEyrRr4DCaIp6G7CRyw';
+const SUPABASE_SERVICE_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InJtb2d4bmtienh2a3RpbGxodGZnIiwicm9sZSI6InNlcnZpY2Vfcm9sZSIsImlhdCI6MTc3MjgwNzI3NiwiZXhwIjoyMDg4MzgzMjc2fQ.fToQqBAZ8XA7Ufj1Zz_tkurKXfngHSw4JAS9-RJmLm8';
+const db      = supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
+const adminDb = supabase.createClient(SUPABASE_URL, SUPABASE_SERVICE_KEY, { auth: { autoRefreshToken: false, persistSession: false } });
 
 let allLeads = [];
 let currentLead = null;
@@ -872,12 +893,9 @@ let currentTab = 'details';
 let currentView = 'leads';
 let currentUser = null;
 
-// Admin-E-Mails (in localStorage gespeichert)
-function getAdminEmails() {
-  try { return JSON.parse(localStorage.getItem('crm_admins') || '[]'); } catch { return []; }
+function isAdmin(user) {
+  return user?.user_metadata?.role === 'admin' || user?.app_metadata?.role === 'admin';
 }
-function saveAdminEmails(list) { localStorage.setItem('crm_admins', JSON.stringify(list)); }
-function isAdmin(email) { return getAdminEmails().includes(email?.toLowerCase()); }
 
 // Settings
 function getSettings() {
@@ -916,7 +934,7 @@ function onLoginSuccess(user) {
   document.getElementById('sidebar-footer').style.display = '';
   document.getElementById('user-email-display').textContent = user.email;
 
-  const admin = isAdmin(user.email);
+  const admin = isAdmin(user);
   document.getElementById('user-role-display').textContent = admin ? 'Admin' : 'Mitarbeiter';
   if (admin) {
     document.getElementById('nav-admin-section').style.display = '';
@@ -1220,8 +1238,7 @@ function openNewLeadModal() {
 
 // ── ADMIN: MAKLER ────────────────────────────────────
 async function loadAdminView() {
-  await loadMaklerList();
-  loadAdminEmailList();
+  await Promise.all([loadMaklerList(), loadUserList()]);
   loadSettingsForm();
 }
 
@@ -1300,32 +1317,78 @@ function applySettings() {
   if (s.dashboardName) document.querySelector('.sidebar-logo .brand').textContent = s.dashboardName;
 }
 
-// ── ADMIN: EMAIL-LISTE ───────────────────────────────
-function loadAdminEmailList() {
-  const emails = getAdminEmails();
-  const el = document.getElementById('admin-email-list');
-  if (!emails.length) { el.innerHTML = '<p style="font-size:12px;color:var(--muted)">Noch keine Admin-E-Mails.</p>'; return; }
-  el.innerHTML = emails.map(e => `
-    <div style="display:flex;align-items:center;gap:10px;padding:8px 12px;background:var(--bg);border:1px solid var(--border);border-radius:6px">
-      <span style="font-size:13px;flex:1">${esc(e)}</span>
-      <span class="admin-badge">Admin</span>
-      <button onclick="removeAdminEmail('${esc(e)}')" style="background:none;border:none;cursor:pointer;color:#ccc;font-size:16px;line-height:1" title="Entfernen">×</button>
-    </div>
-  `).join('');
+// ── ADMIN: USER-VERWALTUNG ────────────────────────────
+async function loadUserList() {
+  const el = document.getElementById('user-list');
+  const { data, error } = await adminDb.auth.admin.listUsers();
+  if (error) { el.innerHTML = `<p style="font-size:13px;color:var(--danger)">Fehler: ${error.message}</p>`; return; }
+
+  const users = data.users || [];
+  if (!users.length) { el.innerHTML = '<p style="font-size:13px;color:var(--muted)">Noch keine Nutzer.</p>'; return; }
+
+  el.innerHTML = users.map(u => {
+    const role     = u.user_metadata?.role === 'admin' ? 'admin' : 'mitarbeiter';
+    const name     = u.user_metadata?.name || '';
+    const isSelf   = u.id === currentUser?.id;
+    return `
+    <div style="display:flex;align-items:center;gap:12px;padding:12px 14px;background:var(--bg);border:1px solid var(--border);border-radius:7px">
+      <div style="width:34px;height:34px;border-radius:50%;background:var(--navy-mid);color:#fff;display:flex;align-items:center;justify-content:center;font-size:13px;font-weight:700;flex-shrink:0">
+        ${(name || u.email).charAt(0).toUpperCase()}
+      </div>
+      <div style="flex:1;min-width:0">
+        <div style="font-size:13px;font-weight:600">${esc(name || u.email)}</div>
+        <div style="font-size:12px;color:var(--muted)">${name ? esc(u.email) : ''}</div>
+      </div>
+      ${role === 'admin' ? '<span class="admin-badge">Admin</span>' : '<span style="font-size:11px;color:var(--muted);text-transform:uppercase;letter-spacing:0.4px">Mitarbeiter</span>'}
+      ${!isSelf ? `
+        <button onclick="toggleUserRole('${u.id}', '${role}')" class="btn btn-ghost" style="padding:5px 10px;font-size:12px" title="${role === 'admin' ? 'Admin entfernen' : 'Zum Admin machen'}">
+          ${role === 'admin' ? 'Admin entfernen' : 'Zum Admin'}
+        </button>
+        <button onclick="deleteUser('${u.id}', '${esc(u.email)}')" style="background:none;border:none;cursor:pointer;color:#ccc;padding:4px;flex-shrink:0" title="Löschen">
+          <svg width="15" height="15" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><polyline points="3 6 5 6 21 6"/><path d="M19 6l-1 14a2 2 0 0 1-2 2H8a2 2 0 0 1-2-2L5 6"/></svg>
+        </button>
+      ` : '<span style="font-size:11px;color:var(--muted)">(Du)</span>'}
+    </div>`;
+  }).join('');
 }
 
-function addAdminEmail() {
-  const email = document.getElementById('new-admin-email').value.trim().toLowerCase();
-  if (!email) return;
-  const list = getAdminEmails();
-  if (!list.includes(email)) { list.push(email); saveAdminEmails(list); }
-  document.getElementById('new-admin-email').value = '';
-  loadAdminEmailList();
+async function createUser() {
+  const email    = document.getElementById('nu-email').value.trim();
+  const password = document.getElementById('nu-password').value;
+  const name     = document.getElementById('nu-name').value.trim();
+  const isAdminRole = document.getElementById('nu-admin').checked;
+  const errEl    = document.getElementById('nu-error');
+  errEl.textContent = '';
+
+  if (!email || !password) { errEl.textContent = 'E-Mail und Passwort sind Pflichtfelder.'; return; }
+  if (password.length < 6)  { errEl.textContent = 'Passwort muss mindestens 6 Zeichen haben.'; return; }
+
+  const { error } = await adminDb.auth.admin.createUser({
+    email,
+    password,
+    email_confirm: true,
+    user_metadata: { name: name || undefined, role: isAdminRole ? 'admin' : 'mitarbeiter' }
+  });
+
+  if (error) { errEl.textContent = 'Fehler: ' + error.message; return; }
+
+  document.getElementById('nu-email').value    = '';
+  document.getElementById('nu-password').value = '';
+  document.getElementById('nu-name').value     = '';
+  document.getElementById('nu-admin').checked  = false;
+  loadUserList();
 }
 
-function removeAdminEmail(email) {
-  saveAdminEmails(getAdminEmails().filter(e => e !== email));
-  loadAdminEmailList();
+async function toggleUserRole(userId, currentRole) {
+  const newRole = currentRole === 'admin' ? 'mitarbeiter' : 'admin';
+  await adminDb.auth.admin.updateUserById(userId, { user_metadata: { role: newRole } });
+  loadUserList();
+}
+
+async function deleteUser(userId, email) {
+  if (!confirm(`Nutzer "${email}" wirklich löschen?`)) return;
+  await adminDb.auth.admin.deleteUser(userId);
+  loadUserList();
 }
 
 // ── HELPERS ──────────────────────────────────────────
