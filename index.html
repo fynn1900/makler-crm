@@ -940,8 +940,12 @@ function onLoginSuccess(user) {
     document.getElementById('nav-admin-section').style.display = '';
     document.getElementById('nav-admin').style.display = '';
   }
-  loadLeads();
   applySettings();
+  if (admin) {
+    switchView('admin');
+  } else {
+    loadLeads();
+  }
 }
 
 async function doLogout() {
