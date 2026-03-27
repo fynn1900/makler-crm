@@ -979,10 +979,12 @@ function switchView(view) {
 
 // ── LOAD ──────────────────────────────────────────────
 async function loadLeads() {
-  const { data, error } = await db
-    .from('makler_leads')
-    .select('*')
-    .order('created_at', { ascending: false });
+  const maklerSlug = currentUser?.user_metadata?.makler_slug;
+  let query = db.from('makler_leads').select('*').order('created_at', { ascending: false });
+  if (!isAdmin(currentUser) && maklerSlug) {
+    query = query.eq('makler_slug', maklerSlug);
+  }
+  const { data, error } = await query;
 
   if (error) { console.error(error); return; }
   allLeads = data || [];
@@ -1023,7 +1025,7 @@ function renderTable(leads) {
         <div class="lead-meta">${esc(l.email || '')}${l.phone ? ' · ' + esc(l.phone) : ''}</div>
       </td>
       <td>${scoreHTML(l.score)}</td>
-      <td>${budgetText(l.budget_min, l.budget_max)}</td>
+      <td>${esc(l.budget_text || budgetText(l.budget_min, l.budget_max))}</td>
       <td>${esc(l.location || '–')}</td>
       <td>${statusPill(l.status)}</td>
       <td>${formatDate(l.created_at)}</td>
@@ -1043,9 +1045,9 @@ function filterLeads() {
     const matchQ = !q || [l.name, l.email, l.location].some(v => v && v.toLowerCase().includes(q));
     const matchS = !status || l.status === status;
     const matchScore = !score ||
-      (score === 'high' && l.score >= 7) ||
-      (score === 'mid'  && l.score >= 4 && l.score <= 6) ||
-      (score === 'low'  && l.score <= 3);
+      (score === 'high' && l.score >= 70) ||
+      (score === 'mid'  && l.score >= 40 && l.score < 70) ||
+      (score === 'low'  && l.score < 40);
     return matchQ && matchS && matchScore;
   });
   renderTable(filtered);
@@ -1082,7 +1084,7 @@ function renderKunden(source) {
         <div class="lead-meta">${esc(l.email || '')}${l.phone ? ' · ' + esc(l.phone) : ''}</div>
       </td>
       <td>${scoreHTML(l.score)}</td>
-      <td>${budgetText(l.budget_min, l.budget_max)}</td>
+      <td>${esc(l.budget_text || budgetText(l.budget_min, l.budget_max))}</td>
       <td>${esc(l.location || '–')}</td>
       <td>${statusPill(l.status)}</td>
       <td>${formatDate(l.updated_at || l.created_at)}</td>
@@ -1142,9 +1144,9 @@ function renderModalDetails() {
     </div>` : ''}
 
     <div class="detail-grid">
-      <div class="detail-field"><label>Score</label><span>${l.score ? l.score + ' / 10' : '–'}</span></div>
+      <div class="detail-field"><label>Score</label><span>${l.score ? l.score + ' / 100' : '–'}</span></div>
       <div class="detail-field"><label>Quelle</label><span>${esc(l.source || '–')}</span></div>
-      <div class="detail-field"><label>Budget</label><span>${budgetText(l.budget_min, l.budget_max)}</span></div>
+      <div class="detail-field"><label>Budget</label><span>${esc(l.budget_text || budgetText(l.budget_min, l.budget_max))}</span></div>
       <div class="detail-field"><label>Zeitrahmen</label><span>${esc(l.timeframe || '–')}</span></div>
       <div class="detail-field"><label>Ort</label><span>${esc(l.location || '–')}</span></div>
       <div class="detail-field"><label>Objekttyp</label><span>${esc(l.property_type || '–')}</span></div>
@@ -1414,7 +1416,7 @@ function budgetText(min, max) {
 }
 function scoreHTML(score) {
   if (!score) return '<span style="color:var(--muted)">–</span>';
-  const cls = score >= 7 ? 'score-high' : score >= 4 ? 'score-mid' : 'score-low';
+  const cls = score >= 70 ? 'score-high' : score >= 40 ? 'score-mid' : 'score-low';
   return `<span class="score-badge ${cls}">${score}</span>`;
 }
 function statusPill(status) {
