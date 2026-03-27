@@ -257,6 +257,54 @@
     .setting-item input:focus, .setting-item select:focus { border-color: var(--accent); background: #fff; }
     .setting-hint { font-size: 11px; color: var(--muted); }
     .admin-badge { display: inline-flex; align-items: center; padding: 2px 8px; background: rgba(46,111,186,0.15); color: var(--accent); border-radius: 4px; font-size: 10px; font-weight: 700; text-transform: uppercase; letter-spacing: 0.5px; margin-left: 8px; }
+
+    /* ── SKELETON ── */
+    @keyframes shimmer { 0%{background-position:200% 0} 100%{background-position:-200% 0} }
+    .skeleton-cell { height: 14px; border-radius: 4px; background: linear-gradient(90deg,#f0f2f5 25%,#e4e7ec 50%,#f0f2f5 75%); background-size: 200% 100%; animation: shimmer 1.4s infinite; display: inline-block; }
+
+    /* ── FOLLOW-UP BUTTON ── */
+    .fu-btn { display: inline-flex; align-items: center; gap: 4px; padding: 2px 9px; border-radius: 5px; font-size: 11px; font-weight: 600; background: var(--accent); color: #fff; border: none; cursor: pointer; margin-left: 8px; text-decoration: none; vertical-align: middle; }
+    .fu-btn:hover { background: var(--accent-hover); }
+
+    /* ── NEW LEAD MODAL ── */
+    #nl-overlay { display: none; position: fixed; inset: 0; background: rgba(10,20,40,0.45); z-index: 200; align-items: center; justify-content: center; }
+    #nl-overlay.open { display: flex; }
+    #nl-modal { background: var(--surface); border-radius: 12px; width: 540px; max-height: 90vh; overflow-y: auto; box-shadow: 0 20px 60px rgba(0,0,0,0.2); }
+    .nl-header { padding: 20px 24px; border-bottom: 1px solid var(--border); display: flex; align-items: center; justify-content: space-between; }
+    .nl-header h3 { font-size: 16px; font-weight: 700; }
+    .nl-body { padding: 20px 24px; display: grid; grid-template-columns: 1fr 1fr; gap: 14px; }
+    .nl-body .full { grid-column: 1/-1; }
+    .nl-footer { padding: 16px 24px; border-top: 1px solid var(--border); display: flex; justify-content: flex-end; gap: 10px; }
+    .nl-field { display: flex; flex-direction: column; gap: 5px; }
+    .nl-field label { font-size: 11px; font-weight: 600; color: var(--muted); text-transform: uppercase; letter-spacing: 0.4px; }
+    .nl-field input, .nl-field select, .nl-field textarea { border: 1px solid var(--border); border-radius: 6px; padding: 8px 11px; font-size: 13px; color: var(--text); background: var(--bg); outline: none; font-family: inherit; }
+    .nl-field input:focus, .nl-field select:focus, .nl-field textarea:focus { border-color: var(--accent); background: #fff; }
+    .nl-field textarea { resize: vertical; min-height: 70px; }
+
+    /* ── CALENDAR VIEW ── */
+    .cal-empty { text-align: center; padding: 60px 20px; color: var(--muted); font-size: 14px; }
+    .cal-month { margin-bottom: 28px; }
+    .cal-month-title { font-size: 13px; font-weight: 700; color: var(--muted); text-transform: uppercase; letter-spacing: 0.6px; margin-bottom: 10px; padding-bottom: 8px; border-bottom: 1px solid var(--border); }
+    .cal-item { display: flex; align-items: center; gap: 14px; padding: 13px 16px; background: var(--surface); border: 1px solid var(--border); border-radius: 8px; margin-bottom: 8px; cursor: pointer; transition: border-color 0.15s, box-shadow 0.15s; }
+    .cal-item:hover { border-color: var(--accent); box-shadow: 0 2px 8px rgba(46,111,186,0.1); }
+    .cal-date-box { width: 44px; height: 44px; border-radius: 8px; background: var(--accent); color: #fff; display: flex; flex-direction: column; align-items: center; justify-content: center; flex-shrink: 0; }
+    .cal-date-day { font-size: 17px; font-weight: 700; line-height: 1; }
+    .cal-date-mon { font-size: 9px; text-transform: uppercase; letter-spacing: 0.4px; margin-top: 1px; }
+    .cal-info { flex: 1; min-width: 0; }
+    .cal-name { font-size: 14px; font-weight: 600; }
+    .cal-meta { font-size: 12px; color: var(--muted); margin-top: 2px; }
+    .cal-right { display: flex; flex-direction: column; align-items: flex-end; gap: 6px; flex-shrink: 0; }
+
+    /* Termin-Eingabe im Modal */
+    .termin-row { display: flex; gap: 8px; align-items: center; margin-top: 4px; }
+    .termin-row input[type="datetime-local"] { flex: 1; border: 1px solid var(--border); border-radius: 6px; padding: 7px 10px; font-size: 13px; color: var(--text); background: var(--bg); outline: none; }
+    .termin-row input:focus { border-color: var(--accent); }
+
+    /* Quick Note im Details-Tab */
+    .quick-note-area { margin-top: 20px; border-top: 1px solid var(--border); padding-top: 16px; }
+    .quick-note-area textarea { width: 100%; border: 1px solid var(--border); border-radius: 6px; padding: 9px 12px; font-size: 13px; resize: none; height: 64px; font-family: inherit; color: var(--text); outline: none; background: var(--bg); }
+    .quick-note-area textarea:focus { border-color: var(--accent); background: #fff; }
+    .quick-note-actions { display: flex; justify-content: flex-end; margin-top: 6px; }
   </style>
 </head>
 <body>
@@ -295,6 +343,10 @@
       <svg width="16" height="16" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><rect x="2" y="7" width="20" height="14" rx="2"/><path d="M16 21V5a2 2 0 0 0-2-2h-4a2 2 0 0 0-2 2v16"/></svg>
       Kunden
     </div>
+    <div class="nav-item" data-view="kalender" onclick="switchView('kalender')">
+      <svg width="16" height="16" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><rect x="3" y="4" width="18" height="18" rx="2"/><line x1="16" y1="2" x2="16" y2="6"/><line x1="8" y1="2" x2="8" y2="6"/><line x1="3" y1="10" x2="21" y2="10"/></svg>
+      Kalender
+    </div>
     <div class="nav-section" id="nav-admin-section" style="display:none">Admin</div>
     <div class="nav-item" data-view="admin" id="nav-admin" style="display:none" onclick="switchView('admin')">
       <svg width="16" height="16" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><circle cx="12" cy="8" r="4"/><path d="M20 21a8 8 0 1 0-16 0"/><path d="M16 11l1.5 1.5L20 10"/></svg>
@@ -317,10 +369,16 @@
 <div id="main">
   <div id="topbar">
     <span class="topbar-title" id="view-title">Leads</span>
-    <button class="btn btn-primary" id="btn-new-lead" onclick="openNewLeadModal()">
-      <svg width="14" height="14" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>
-      Neuer Lead
-    </button>
+    <div style="display:flex;gap:8px;align-items:center">
+      <button class="btn btn-ghost" id="btn-export" onclick="exportCSV()" style="display:none">
+        <svg width="14" height="14" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>
+        CSV
+      </button>
+      <button class="btn btn-primary" id="btn-new-lead" onclick="openNewLeadModal()">
+        <svg width="14" height="14" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>
+        Neuer Lead
+      </button>
+    </div>
   </div>
 
   <div id="content">
@@ -503,6 +561,54 @@
           </tbody>
         </table>
       </div>
+    <!-- VIEW: KALENDER -->
+    <div id="view-kalender" style="display:none">
+      <div class="kpi-row">
+        <div class="kpi-card"><div class="kpi-label">Termine gesamt</div><div class="kpi-value" id="kpi-cal-total">–</div></div>
+        <div class="kpi-card"><div class="kpi-label">Diese Woche</div><div class="kpi-value" id="kpi-cal-week">–</div></div>
+        <div class="kpi-card"><div class="kpi-label">Diesen Monat</div><div class="kpi-value" id="kpi-cal-month">–</div></div>
+        <div class="kpi-card"><div class="kpi-label">Vergangen</div><div class="kpi-value" id="kpi-cal-past">–</div></div>
+      </div>
+      <div id="kalender-body"></div>
+    </div>
+
+    </div>
+  </div>
+</div>
+
+<!-- NEW LEAD MODAL -->
+<div id="nl-overlay" onclick="if(event.target===this)closeNewLeadModal()">
+  <div id="nl-modal">
+    <div class="nl-header">
+      <h3>Neuen Lead anlegen</h3>
+      <button class="modal-close" onclick="closeNewLeadModal()">
+        <svg width="20" height="20" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
+      </button>
+    </div>
+    <div class="nl-body">
+      <div class="nl-field"><label>Name *</label><input type="text" id="nl-name" placeholder="Max Mustermann" /></div>
+      <div class="nl-field"><label>E-Mail</label><input type="email" id="nl-email" placeholder="max@beispiel.de" /></div>
+      <div class="nl-field"><label>Telefon</label><input type="text" id="nl-phone" placeholder="+49 30 123456" /></div>
+      <div class="nl-field"><label>Budget</label><input type="text" id="nl-budget" placeholder="400.000 – 600.000 €" /></div>
+      <div class="nl-field"><label>Ort / Region</label><input type="text" id="nl-location" placeholder="Berlin, Hamburg…" /></div>
+      <div class="nl-field"><label>Zeitrahmen</label><input type="text" id="nl-timeframe" placeholder="3–6 Monate" /></div>
+      <div class="nl-field"><label>Objekttyp</label>
+        <select id="nl-property">
+          <option value="">Bitte wählen</option>
+          <option>Wohnung</option><option>Haus</option><option>Grundstück</option><option>Gewerbe</option><option>Mehrfamilienhaus</option>
+        </select>
+      </div>
+      <div class="nl-field"><label>Service</label>
+        <select id="nl-service">
+          <option value="">Bitte wählen</option>
+          <option>Kauf</option><option>Verkauf</option><option>Miete</option><option>Vermietung</option><option>Bewertung</option>
+        </select>
+      </div>
+      <div class="nl-field full"><label>Nachricht / Notiz</label><textarea id="nl-message" placeholder="Weitere Informationen zum Lead…"></textarea></div>
+    </div>
+    <div class="nl-footer">
+      <button class="btn btn-ghost" onclick="closeNewLeadModal()">Abbrechen</button>
+      <button class="btn btn-primary" onclick="submitNewLead()">Lead anlegen</button>
     </div>
   </div>
 </div>
@@ -602,19 +708,33 @@ async function doLogout() {
 function switchView(view) {
   currentView = view;
   document.querySelectorAll('.nav-item').forEach(el => el.classList.toggle('active', el.dataset.view === view));
-  document.getElementById('view-leads').style.display  = view === 'leads'  ? '' : 'none';
-  document.getElementById('view-kunden').style.display = view === 'kunden' ? '' : 'none';
-  document.getElementById('view-admin').style.display  = view === 'admin'  ? '' : 'none';
-  const titles = { leads: 'Leads', kunden: 'Kunden', admin: 'Administration' };
+  document.getElementById('view-leads').style.display    = view === 'leads'    ? '' : 'none';
+  document.getElementById('view-kunden').style.display   = view === 'kunden'   ? '' : 'none';
+  document.getElementById('view-admin').style.display    = view === 'admin'    ? '' : 'none';
+  document.getElementById('view-kalender').style.display = view === 'kalender' ? '' : 'none';
+  const titles = { leads: 'Leads', kunden: 'Kunden', admin: 'Administration', kalender: 'Kalender' };
   document.getElementById('view-title').textContent = titles[view] || view;
   document.getElementById('btn-new-lead').style.display = view === 'leads' ? '' : 'none';
-  if (view === 'kunden') renderKunden(allLeads);
-  if (view === 'admin')  loadAdminView();
-  if (view === 'leads')  loadLeads();
+  document.getElementById('btn-export').style.display   = view === 'leads' ? '' : 'none';
+  if (view === 'kunden')   renderKunden(allLeads);
+  if (view === 'admin')    loadAdminView();
+  if (view === 'leads')    loadLeads();
+  if (view === 'kalender') renderKalender();
 }
 
 // ── LOAD ──────────────────────────────────────────────
 async function loadLeads() {
+  // Skeleton
+  document.getElementById('leads-table-body').innerHTML = [1,2,3,4,5].map(() => `
+    <tr>
+      <td><div class="skeleton-cell" style="width:140px;height:14px"></div><div class="skeleton-cell" style="width:100px;height:11px;margin-top:5px"></div></td>
+      <td><div class="skeleton-cell" style="width:36px;height:36px;border-radius:50%"></div></td>
+      <td><div class="skeleton-cell" style="width:80px"></div></td>
+      <td><div class="skeleton-cell" style="width:60px"></div></td>
+      <td><div class="skeleton-cell" style="width:80px;height:22px;border-radius:11px"></div></td>
+      <td><div class="skeleton-cell" style="width:70px"></div></td>
+    </tr>`).join('');
+
   const maklerSlug = currentUser?.user_metadata?.makler_slug;
   let query = db.from('makler_leads').select('*').order('created_at', { ascending: false });
   if (!isAdmin(currentUser) && maklerSlug) query = query.eq('makler_slug', maklerSlug);
@@ -779,14 +899,16 @@ function renderModalDetails() {
   const fu2Due  = new Date(created.getTime() + 3 * 24*60*60*1000);
   const fu3Due  = new Date(created.getTime() + 7 * 24*60*60*1000);
 
-  const tlItem = (label, date, done, overdue) => {
+  const tlItem = (label, date, done, overdue, fuN) => {
     const cls   = done ? 'done' : overdue ? 'waiting' : 'pending';
     const badge = done ? 'sent' : overdue ? 'waiting' : 'pending';
     const txt   = done ? 'Gesendet' : overdue ? 'Ausstehend' : 'Geplant';
+    const sendBtn = (!done && l.email && fuN) ?
+      `<a href="mailto:${esc(l.email)}?subject=${encodeURIComponent('Kurze Nachfrage – ' + l.name)}&body=${encodeURIComponent(fuTemplate(fuN, l.name))}" class="fu-btn">✉ Senden</a>` : '';
     return `<div class="timeline-item ${cls}">
       <div class="tl-dot"></div>
       <div class="tl-content">
-        <div class="tl-label">${label} <span class="tl-badge ${badge}">${txt}</span></div>
+        <div class="tl-label">${label} <span class="tl-badge ${badge}">${txt}</span>${sendBtn}</div>
         <div class="tl-date">${formatDate(date)}</div>
       </div>
     </div>`;
@@ -845,10 +967,25 @@ function renderModalDetails() {
 
     <div class="section-label">Follow-up Verlauf</div>
     <div class="timeline">
-      ${tlItem('Lead eingegangen', l.created_at, true, false)}
-      ${tlItem('Follow-up 1 (Tag 1)', fu1Due.toISOString(), l.follow_up_1_sent, now > fu1Due && !l.follow_up_1_sent)}
-      ${tlItem('Follow-up 2 (Tag 3)', fu2Due.toISOString(), l.follow_up_2_sent, now > fu2Due && !l.follow_up_2_sent)}
-      ${tlItem('Follow-up 3 (Tag 7)', fu3Due.toISOString(), l.follow_up_3_sent, now > fu3Due && !l.follow_up_3_sent)}
+      ${tlItem('Lead eingegangen', l.created_at, true, false, null)}
+      ${tlItem('Follow-up 1 (Tag 1)', fu1Due.toISOString(), l.follow_up_1_sent, now > fu1Due && !l.follow_up_1_sent, 1)}
+      ${tlItem('Follow-up 2 (Tag 3)', fu2Due.toISOString(), l.follow_up_2_sent, now > fu2Due && !l.follow_up_2_sent, 2)}
+      ${tlItem('Follow-up 3 (Tag 7)', fu3Due.toISOString(), l.follow_up_3_sent, now > fu3Due && !l.follow_up_3_sent, 3)}
+    </div>
+
+    <div class="section-label" style="margin-top:20px">Besichtigungstermin</div>
+    <div class="termin-row">
+      <input type="datetime-local" id="termin-input" value="${l.termin_date ? l.termin_date.slice(0,16) : ''}" />
+      <button class="btn btn-primary" style="padding:7px 14px;font-size:12px" onclick="saveTermin()">Speichern</button>
+      ${l.termin_date ? `<button class="btn btn-ghost" style="padding:7px 14px;font-size:12px" onclick="clearTermin()">Löschen</button>` : ''}
+    </div>
+
+    <div class="quick-note-area">
+      <div class="section-label" style="margin-top:0;margin-bottom:8px">Schnellnotiz</div>
+      <textarea id="quick-note-input" placeholder="Neue Notiz…"></textarea>
+      <div class="quick-note-actions">
+        <button class="btn btn-primary" style="padding:6px 14px;font-size:12px" onclick="addQuickNote()">Notiz speichern</button>
+      </div>
     </div>
   `;
 }
@@ -927,7 +1064,186 @@ async function renderModalActivities() {
 
 // ── NEW LEAD ──────────────────────────────────────────
 function openNewLeadModal() {
-  alert('Neuer Lead – Formular kommt noch.');
+  ['nl-name','nl-email','nl-phone','nl-budget','nl-location','nl-timeframe','nl-message'].forEach(id => document.getElementById(id).value = '');
+  document.getElementById('nl-property').value = '';
+  document.getElementById('nl-service').value = '';
+  document.getElementById('nl-overlay').classList.add('open');
+}
+function closeNewLeadModal() {
+  document.getElementById('nl-overlay').classList.remove('open');
+}
+async function submitNewLead() {
+  const name = document.getElementById('nl-name').value.trim();
+  if (!name) { alert('Name ist Pflichtfeld.'); return; }
+  const maklerSlug = currentUser?.user_metadata?.makler_slug || null;
+  const payload = {
+    name,
+    email:         document.getElementById('nl-email').value.trim() || null,
+    phone:         document.getElementById('nl-phone').value.trim() || null,
+    budget_text:   document.getElementById('nl-budget').value.trim() || null,
+    location:      document.getElementById('nl-location').value.trim() || null,
+    timeframe:     document.getElementById('nl-timeframe').value.trim() || null,
+    property_type: document.getElementById('nl-property').value || null,
+    service:       document.getElementById('nl-service').value || null,
+    nachricht:     document.getElementById('nl-message').value.trim() || null,
+    status:        'neu',
+    source:        'manual',
+    makler_slug:   maklerSlug,
+    score:         null,
+  };
+  const { error } = await db.from('makler_leads').insert(payload);
+  if (error) { alert('Fehler: ' + error.message); return; }
+  closeNewLeadModal();
+  await loadLeads();
+}
+
+// ── FOLLOW-UP TEMPLATES ───────────────────────────────
+function fuTemplate(n, name) {
+  const templates = {
+    1: `Hallo ${name},\n\nvielen Dank für Ihre Anfrage. Ich wollte kurz nachfragen, ob ich Ihnen weiterhelfen kann und ob noch Fragen offen sind.\n\nMit freundlichen Grüßen`,
+    2: `Hallo ${name},\n\nich melde mich nochmals bezüglich Ihrer Immobilienanfrage. Haben Sie bereits eine Entscheidung getroffen oder kann ich Ihnen weitere Informationen zukommen lassen?\n\nMit freundlichen Grüßen`,
+    3: `Hallo ${name},\n\nzum Abschluss möchte ich noch einmal nachfragen, ob ich Ihnen bei der Suche nach der passenden Immobilie behilflich sein kann. Ich stehe jederzeit zur Verfügung.\n\nMit freundlichen Grüßen`,
+  };
+  return templates[n] || '';
+}
+
+// ── TERMIN ────────────────────────────────────────────
+async function saveTermin() {
+  const val = document.getElementById('termin-input').value;
+  if (!val) return;
+  const iso = new Date(val).toISOString();
+  const { error } = await db.from('makler_leads').update({ termin_date: iso }).eq('id', currentLead.id);
+  if (!error) {
+    currentLead.termin_date = iso;
+    allLeads = allLeads.map(l => l.id === currentLead.id ? { ...l, termin_date: iso } : l);
+    renderModalDetails();
+  }
+}
+async function clearTermin() {
+  const { error } = await db.from('makler_leads').update({ termin_date: null }).eq('id', currentLead.id);
+  if (!error) {
+    currentLead.termin_date = null;
+    allLeads = allLeads.map(l => l.id === currentLead.id ? { ...l, termin_date: null } : l);
+    renderModalDetails();
+  }
+}
+
+// ── QUICK NOTE ────────────────────────────────────────
+async function addQuickNote() {
+  const content = document.getElementById('quick-note-input')?.value.trim();
+  if (!content) return;
+  await db.from('makler_notes').insert({ lead_id: currentLead.id, content });
+  await db.from('makler_activities').insert({ lead_id: currentLead.id, type: 'notiz', content });
+  document.getElementById('quick-note-input').value = '';
+}
+
+// ── CSV EXPORT ────────────────────────────────────────
+function exportCSV() {
+  const q      = document.getElementById('search-input').value.toLowerCase();
+  const status = document.getElementById('filter-status').value;
+  const score  = document.getElementById('filter-score').value;
+  const leads  = allLeads.filter(l => {
+    if (!['neu','kontaktiert','verloren'].includes(l.status)) return false;
+    const matchQ     = !q || [l.name, l.email, l.location].some(v => v && v.toLowerCase().includes(q));
+    const matchS     = !status || l.status === status;
+    const matchScore = !score ||
+      (score === 'high' && l.score >= 70) ||
+      (score === 'mid'  && l.score >= 40 && l.score < 70) ||
+      (score === 'low'  && l.score < 40);
+    return matchQ && matchS && matchScore;
+  });
+  const headers = ['Name','E-Mail','Telefon','Score','Status','Budget','Ort','Zeitrahmen','Objekttyp','Service','Eingang'];
+  const rows = leads.map(l => [
+    l.name, l.email||'', l.phone||'', l.score||'', l.status,
+    l.budget_text||budgetText(l.budget_min,l.budget_max), l.location||'',
+    l.timeframe||'', l.property_type||'', l.service||'', formatDate(l.created_at)
+  ].map(v => `"${String(v).replace(/"/g,'""')}"`).join(','));
+  const csv = [headers.join(','), ...rows].join('\n');
+  const a = document.createElement('a');
+  a.href = 'data:text/csv;charset=utf-8,' + encodeURIComponent(csv);
+  a.download = `leads_${new Date().toISOString().slice(0,10)}.csv`;
+  a.click();
+}
+
+// ── KALENDER ─────────────────────────────────────────
+function renderKalender() {
+  const body = document.getElementById('kalender-body');
+  const termine = allLeads
+    .filter(l => l.termin_date || l.status === 'termin')
+    .sort((a,b) => {
+      const da = a.termin_date || a.updated_at || a.created_at;
+      const db_ = b.termin_date || b.updated_at || b.created_at;
+      return new Date(da) - new Date(db_);
+    });
+
+  const now = new Date();
+  const weekEnd = new Date(now.getTime() + 7*24*60*60*1000);
+
+  const withDate  = termine.filter(l => l.termin_date);
+  const noDate    = termine.filter(l => !l.termin_date);
+  const upcoming  = withDate.filter(l => new Date(l.termin_date) >= now);
+  const past      = withDate.filter(l => new Date(l.termin_date) < now);
+  const thisWeek  = upcoming.filter(l => new Date(l.termin_date) <= weekEnd);
+  const thisMonth = upcoming.filter(l => {
+    const d = new Date(l.termin_date);
+    return d.getMonth() === now.getMonth() && d.getFullYear() === now.getFullYear();
+  });
+
+  document.getElementById('kpi-cal-total').textContent   = termine.length;
+  document.getElementById('kpi-cal-week').textContent    = thisWeek.length;
+  document.getElementById('kpi-cal-month').textContent   = thisMonth.length;
+  document.getElementById('kpi-cal-past').textContent    = past.length;
+
+  if (!termine.length) {
+    body.innerHTML = '<div class="cal-empty">Keine Termine – setze Termine direkt im Lead.</div>';
+    return;
+  }
+
+  // Group upcoming by month
+  const groups = {};
+  upcoming.forEach(l => {
+    const d   = new Date(l.termin_date);
+    const key = d.toLocaleDateString('de-DE', { month:'long', year:'numeric' });
+    if (!groups[key]) groups[key] = [];
+    groups[key].push(l);
+  });
+
+  let html = '';
+  Object.entries(groups).forEach(([month, items]) => {
+    html += `<div class="cal-month"><div class="cal-month-title">${month}</div>`;
+    items.forEach(l => { html += calItem(l); });
+    html += '</div>';
+  });
+  if (past.length) {
+    html += `<div class="cal-month"><div class="cal-month-title" style="color:var(--muted)">Vergangen</div>`;
+    past.forEach(l => { html += calItem(l); });
+    html += '</div>';
+  }
+  if (noDate.length) {
+    html += `<div class="cal-month"><div class="cal-month-title" style="color:var(--muted)">Termin-Status (kein Datum)</div>`;
+    noDate.forEach(l => { html += calItem(l); });
+    html += '</div>';
+  }
+  body.innerHTML = html;
+}
+
+function calItem(l) {
+  const d = l.termin_date ? new Date(l.termin_date) : null;
+  const dateBox = d ? `
+    <div class="cal-date-box">
+      <div class="cal-date-day">${d.getDate()}</div>
+      <div class="cal-date-mon">${d.toLocaleDateString('de-DE',{month:'short'})}</div>
+    </div>` :
+    `<div class="cal-date-box" style="background:var(--muted)"><div style="font-size:11px">Kein<br>Datum</div></div>`;
+  const time = d ? ` · ${d.toLocaleTimeString('de-DE',{hour:'2-digit',minute:'2-digit'})} Uhr` : '';
+  return `<div class="cal-item" onclick="openLead('${l.id}')">
+    ${dateBox}
+    <div class="cal-info">
+      <div class="cal-name">${esc(l.name)}</div>
+      <div class="cal-meta">${esc(l.budget_text || budgetText(l.budget_min,l.budget_max))} · ${esc(l.location||'–')}${time}</div>
+    </div>
+    <div class="cal-right">${scoreHTML(l.score)}${statusPill(l.status)}</div>
+  </div>`;
 }
 
 // ── ADMIN: MAKLER ────────────────────────────────────
